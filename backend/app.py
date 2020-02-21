@@ -109,6 +109,7 @@ def _get_by_id(model, id, rels=[]):
         obj = to_dict(obj, rels=rels)
     return obj
 
+
 def emit_one(action_name, payload):
     payload = camelize_dict_keys(payload)
     emit('action', {"type": action_name, **payload})
@@ -195,17 +196,16 @@ def update_search(*, search, **_):
         query = models.FramesQuery(
             tbegin=search['start_date'], tend=search['end_date'],
             collection_id=search.get('collection_id'))
-        ntotal, frames = db.get_frames_subsample(session, query, nframes=search['sample_size'])
-        frames = [{**to_dict(frame), "thumbnail": frame.thumbnail} for frame in frames]
+        ntotal, frames = db.get_frames_subsample(session, query, nframes=50)
+        frames = [to_dict(frame) for frame in frames]
 
     search_results = {'ntotal': ntotal, 'frames': frames}
+    emit_one('SEARCH_UPDATED', {'searchResults': search_results, 'search': search})
 
-    # print(f'ntotal: {ntotal}')
-    print(f'ntotal: {ntotal}')
-    print(f'len(frames): {len(search_results["frames"])}')
 
-    # print(search_results)
-    emit('action', {"type": 'SEARCH_UPDATED', 'searchResults': search_results})
+def addto_collection(*, search, **_):
+    pass
+
 
 
 @socketio.on('action')

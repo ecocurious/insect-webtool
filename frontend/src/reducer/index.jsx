@@ -12,6 +12,10 @@ const ui = createReducer(
     SERVER_INIT: (state, action) => ({
       activeFrame: action.frames[0].id,
       activeCollection: action.collections[0].id
+    }),
+    SEARCH_UPDATED: (state, action) => ({
+      activeFrame: null,
+      activeCollection: action.search.collectionId
     })
   }
 );
@@ -71,7 +75,7 @@ const labels = createReducer(key([]), {
 const defaultSearch = {
   startDate: new Date("2019-11-15T00:00:00"),
   endDate: new Date("2020-01-31T00:00:00"),
-  sampleSize: 500,
+  //   sampleSize: 500,
   collectionId: null
 };
 

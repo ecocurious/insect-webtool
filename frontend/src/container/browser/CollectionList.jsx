@@ -116,12 +116,10 @@ const CollectionList = ({
         onChangeActive={onChangeActive}
         classes={classes}
       />
-      <Divider key={"divider-all"} variant="inset" component="li" />
       {intersperse(
         collections.allIds.map(id => collections.byKey[id]),
-        i => (
-          <Divider key={"divider-" + i} variant="inset" component="li" />
-        ),
+        i => null,
+        //   <Divider key={"divider-" + i} variant="inset" component="li" />
         (a, i) => (
           <Collection
             key={"collection-" + i}

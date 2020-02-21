@@ -78,7 +78,7 @@ const BrowserNav = ({ search, onSearchUpdate }) => {
           classes={classes}
         />
       </Grid>
-      <Grid container item xs={4} spacing={3}>
+      {/* <Grid container item xs={4} spacing={3}>
         <TextField
           className={classes.sampleSize}
           id="standard-basic"
@@ -91,7 +91,7 @@ const BrowserNav = ({ search, onSearchUpdate }) => {
             })
           }
         />
-      </Grid>
+      </Grid> */}
       <Grid container item xs={12} spacing={3}>
         <DateRange
           startDate={search.startDate}

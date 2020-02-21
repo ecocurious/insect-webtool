@@ -55,8 +55,8 @@ const FrameGrid = ({ frames, showSelect }) => {
         <FrameTile
           key={"frame-" + idx}
           {...frame}
-          selected={showSelect ? frames.selectedIds.includes(frame.id) : false}
-          showSelect={showSelect}
+          //   selected={showSelect ? frames.selectedIds.includes(frame.id) : false}
+          //   showSelect={showSelect}
         />
       ))}
     </GridList>

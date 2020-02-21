@@ -57,3 +57,13 @@ export const addCollection = ({ name }) => {
     server: true
   };
 };
+
+export const addToCollection = ({ search, collectionId, sampleSize }) => {
+  return {
+    type: "COLLECTION_ADDTO",
+    search,
+    collectionId,
+    sampleSize,
+    server: true
+  };
+};
