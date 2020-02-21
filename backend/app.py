@@ -203,9 +203,13 @@ def update_search(*, search, **_):
     emit_one('SEARCH_UPDATED', {'searchResults': search_results, 'search': search})
 
 
-def addto_collection(*, search, **_):
-    pass
-
+def addto_collection(*, search, collection_id, sample_size, **_):
+    with db.session_scope() as session:
+        query = models.FramesQuery(
+            tbegin=search['start_date'], tend=search['end_date'],
+            collection_id=search.get('collection_id'))
+        db.collection_add_frames_via_query(
+            session, collection_id, query, nframes=sample_size)
 
 
 @socketio.on('action')
@@ -222,8 +226,9 @@ def handle_actions(action):
         add_collection(**s_action)
     if action['type'] == "COLLECTION_DELETE":
         delete_collection(**s_action)
-    if action['type'] == "COLLECTIONFRAME_SELECT":
-        pass
+    if action['type'] == "COLLECTION_ADDTO":
+        addto_collection(**s_action)
+
 
 
 def debug():
