@@ -9,6 +9,10 @@ import IconButton from "@material-ui/core/IconButton";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+
+
 const useStyles = makeStyles({
   gridList: {
     width: "100%"
@@ -32,13 +36,37 @@ const FrameTile = ({
   onSelectedFramesUpdate
 }) => {
   const classes = useStyles();
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   return (
+
     <GridListTile>
-      <img style={{cursor: "pointer"}} onClick={() => onClickFrame(id)} src={thumbnail} alt={timestamp} className={classes.img} />
+      <img style={{cursor: "pointer"}}
+        onClick={() => onClickFrame(id)} src={thumbnail} alt={timestamp} className={classes.img} />
+
+       <Menu
+            id="simple-menu"
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+          >
+            <MenuItem onClick={handleClose}>Set Leftmost</MenuItem>
+            <MenuItem onClick={handleClose}>Set Rightmost</MenuItem>
+       </Menu>
+
       <GridListTileBar
         titlePosition="top"
-        actionPosition="left"
-        title={id}
+        actionPosition="right"
+          title={(<span style={{cursor: "pointer"}} onClick={handleClick}>{id}</span>)}
         actionIcon={
           <IconButton
               aria-label={`select`}

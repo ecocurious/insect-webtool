@@ -48,7 +48,10 @@ const Browser = ({
           <BrowserNav search={search} onSearchUpdate={onSearchUpdate} frames={frames}/>
         </Grid>
         <Grid item>
-            <b>{frames ? frames.length + " items" : null}</b>
+            <b>{search.mode == 'subsample' ?
+                 (frames ? frames.length + " shown (out of " + ntotal + ")" : null) :
+                 (frames ? frames.length + " in page" : null) }
+            </b>
         </Grid>
         <Grid item>
           <ResultsHeader

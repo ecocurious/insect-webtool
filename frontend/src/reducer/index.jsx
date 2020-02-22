@@ -2,7 +2,7 @@ import { combineReducers } from "redux";
 import { createReducer, findNonSerializableValue } from "redux-starter-kit";
 import _ from "lodash";
 
-const view = createReducer("FRAME", {
+const view = createReducer("BROWSER", {
   VIEW_UPDATE: (state, action) => action.view
 });
 
