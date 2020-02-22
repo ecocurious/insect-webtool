@@ -179,7 +179,7 @@ class DateRange extends React.Component {
     const delta = (x, y) => Math.abs(x-y);
 
     if (delta(+this.props.startDate, +startDate) > 2000 || delta(+this.props.endDate, +endDate) > 2000) {
-        this.props.onSearchUpdate({...search, ...{afterId: null}, ...{startDate, endDate}});
+        this.props.onSearchUpdate({...search, ...{afterId: undefined}, ...{startDate, endDate}});
     }
 
     // if (this.props.endDate != endDate) {
@@ -194,7 +194,7 @@ class DateRange extends React.Component {
     const startDate = new Date(Math.min(+rangeStartHint, +this.props.startDate));
     const endDate = new Date(Math.max(+this.props.endDate, +rangeStopHint));
 
-    this.props.onSearchUpdate({...search, ...{afterId: null} , ...{startDate, endDate}});
+    this.props.onSearchUpdate({...search, ...{afterId: undefined} , ...{startDate, endDate}});
   }
 
   zoomToFrames() {

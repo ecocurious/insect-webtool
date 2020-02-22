@@ -66,8 +66,8 @@ const Browser = ({
                 <ButtonGroup aria-label="button group">
                     <Button onClick={() => {
                         if (frames) {
-                            const after_id = frames[frames.length-1].id;
-                            onSearchUpdate({...search, ...{after_id}});
+                            const afterId = frames[frames.length-1].id;
+                            onSearchUpdate({...search, ...{afterId}});
                         }
                     } }>Next Page<NavigateNextIcon /></Button>
                 </ButtonGroup>

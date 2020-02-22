@@ -94,7 +94,7 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
               size="small"
               value={search.mode}
               onChange={(e, mode) => {
-                  var afterId = null;
+                  var afterId = undefined;
                   if (frames && _.size(frames) > 0) {
                       afterId = frames[0].id
                   }
