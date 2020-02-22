@@ -8,6 +8,7 @@ import BrowserNav from "./BrowserNav";
 import CollectionList from "./CollectionList";
 import AddCollection from "./AddCollection";
 import AddToCollection from "./AddToCollection";
+import ResultsHeader from "./ResultsHeader";
 
 import Grid from "@material-ui/core/Grid";
 
@@ -35,7 +36,9 @@ const Browser = ({
       <Grid container item xs={9} spacing={2}>
         <Grid container item xs={12} spacing={0}>
           <BrowserNav search={search} onSearchUpdate={onSearchUpdate} frames={frames}/>
-          {ntotal ? <div>Total: {ntotal}</div> : <div></div>}
+        </Grid>
+        <Grid>
+          <ResultsHeader search={search} ntotal={ntotal} frames={frames} onSearchUpdate={onSearchUpdate} />
         </Grid>
         <FrameGrid
           frames={frames}
