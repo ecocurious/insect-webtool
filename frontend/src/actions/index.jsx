@@ -14,6 +14,23 @@ export const updateSearch = search => {
   };
 };
 
+export const deleteAppearanceLabel = appearanceLabelId => {
+  return {
+    type: "APPEARANCE_LABEL_DELETE",
+    appearanceLabelId,
+    server: true
+  };
+};
+
+export const addAppearanceLabel = ({ appearanceId, labelId }) => {
+  return {
+    type: "APPEARANCE_LABEL_ADD",
+    appearanceId,
+    labelId,
+    server: true
+  };
+};
+
 export const deleteAppearance = appearanceId => {
   return {
     type: "APPEARANCE_DELETE",

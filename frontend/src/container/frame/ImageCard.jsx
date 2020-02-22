@@ -53,7 +53,8 @@ const useStyles = makeStyles({
 
 const ImageCard = ({
   activelabels,
-  activeAnnotation,
+  activeAppearance,
+  setActiveAppearance,
   onAddAppearance,
   appearances,
   collection,
@@ -92,12 +93,14 @@ const ImageCard = ({
           ) : null}
           <Image url={frame.url} classes={classes} setSize={setImageSize} />
           <div className={classes.annotations}>
-            {appearances.allIds.map(id => (
+            {appearances.allIds.map((id, idx) => (
               <ImageAnnotation
-                key={"annotation-" + id}
+                key={"annotation-" + idx}
                 appearance={appearances.byKey[id]}
                 imageSize={imageSize}
+                active={id == activeAppearance}
                 onBoxUpdate={box => onUpdateBox(id, box)}
+                onClick={() => setActiveAppearance(id)}
               />
             ))}
           </div>

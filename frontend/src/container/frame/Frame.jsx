@@ -10,10 +10,11 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
 
 import ImageCard from "./ImageCard";
-import LabelList from "./LabelList";
-import AppearanceList from "./AppearanceList";
+import LabelSelector from "./LabelSelector";
+import Appearance from "./Appearance";
 
 import _ from "lodash";
+import { Typography } from "@material-ui/core";
 
 const useStyles = makeStyles({
   img: { height: "100%" },
@@ -29,67 +30,54 @@ const Frame = ({
   onChangeFrame,
   onAddAppearance,
   onDeleteAppearance,
-  onUpdateBox
+  onUpdateBox,
+  onDeleteAppearanceLabel,
+  onAddAppearanceLabel
 }) => {
-  console.log(labels);
   if (!frame) {
     return null;
   }
 
-  console.log(collection);
-
   const classes = useStyles();
-  const [activelabels, setActivelabels] = React.useState([labels.allIds[0]]);
+  const [activeLabel, setActiveLabel] = React.useState(labels.allIds[0]);
   const [activeAppearance, setActiveAppearance] = React.useState();
   const [editMode, setEditMode] = React.useState(false);
 
-  //   const onChangeActive = id => {
-  //     setActiveAnnotation(id);
-  //   };
-
-  const handleToggleLabels = value => () => {
-    const currentIndex = activelabels.indexOf(value);
-    const newActivelabels = [...activelabels];
-
-    if (currentIndex === -1) {
-      newActivelabels.push(value);
-    } else {
-      newActivelabels.splice(currentIndex, 1);
-    }
-
-    setActivelabels(newActivelabels);
-  };
-
-  //   const onlabelsChange = (e, id) => {
-  //     setActivelabels(id);
-  //   };
+  console.log(
+    appearances,
+    activeAppearance,
+    appearances.byKey[activeAppearance]
+  );
 
   return (
     <Grid container justify="space-between" spacing={1} alignItems="flex-start">
       <Grid container item xs={9} spacing={2}>
         <Grid container item xs={12} spacing={0}>
           <ImageCard
-            {...{
-              collection,
-              activelabels,
-              activeAnnotation: activeAppearance,
-              onAddAppearance: appearance =>
-                onAddAppearance(frame.id, appearance, activelabels),
-              appearances,
-              frame,
-              onChangeFrame: shift =>
-                onChangeFrame(collection.id, frame.id, shift),
-              onUpdateBox
-            }}
+            collection={collection}
+            setActiveAppearance={setActiveAppearance}
+            activeAppearance={activeAppearance}
+            onAddAppearance={appearance =>
+              onAddAppearance(frame.id, appearance, [activeLabel])
+            }
+            appearances={appearances}
+            frame={frame}
+            onChangeFrame={shift =>
+              onChangeFrame(collection.id, frame.id, shift)
+            }
+            onUpdateBox={onUpdateBox}
           />
         </Grid>
       </Grid>
       <Grid container item xs={3} spacing={2}>
         <Grid container item xs={12} spacing={0}>
-          <LabelList
-            handleToggle={handleToggleLabels}
+          <LabelSelector
+            setActiveLabel={setActiveLabel}
             labels={labels}
-            activelabels={activelabels}
+            activeLabel={activeLabel}
+            onAddAppearanceLabel={() =>
+              onAddAppearanceLabel(activeAppearance, activeLabel)
+            }
           />
         </Grid>
         {/* <Grid container item xs={12} spacing={1}>
@@ -104,16 +92,19 @@ const Frame = ({
           />
         </Grid> */}
         <Grid container item xs={12} spacing={0}>
-          <AppearanceList
-            appearances={appearances}
-            labels={labels}
-            activeAppearance={activeAppearance}
-            onChangeActive={id => setActiveAppearance(id)}
-            onDeleteAppearance={onDeleteAppearance}
-            // activeId={activeAnnotation}
-            // onDelete={onDeleteAppearance}
-            // onActive={onActive}
-          />
+          {activeAppearance ? (
+            <>
+              <Typography>Labels</Typography>
+              <Appearance
+                appearance={appearances.byKey[activeAppearance]}
+                labels={labels}
+                onDeleteAppearanceLabel={onDeleteAppearanceLabel}
+                // activeId={activeAnnotation}
+                // onDelete={onDeleteAppearance}
+                // onActive={onActive}
+              />
+            </>
+          ) : null}
         </Grid>
       </Grid>
     </Grid>
@@ -133,6 +124,10 @@ export default connect(
     onAddAppearance: (frameId, appearance, labelIds) =>
       dispatch(a.addAppearance({ frameId, appearance, labelIds })),
     onDeleteAppearance: id => dispatch(a.deleteAppearance(id)),
-    onUpdateBox: (id, box) => dispatch(a.updateBox(id, box))
+    onUpdateBox: (id, box) => dispatch(a.updateBox(id, box)),
+    onAddAppearanceLabel: (appearanceId, labelId) =>
+      dispatch(a.addAppearanceLabel({ appearanceId, labelId })),
+    onDeleteAppearanceLabel: appearanceLabelId =>
+      dispatch(a.deleteAppearanceLabel(appearanceLabelId))
   })
 )(Frame);

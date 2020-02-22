@@ -37,9 +37,6 @@ const useStyles = makeStyles(theme => ({
   //   }
 }));
 
-const appearanceLabelStr = ({ name, scientificName, systematicLevel }) =>
-  `${name} (${scientificName})`;
-
 const AppearanceLabelText = ({ label, classes }) => (
   <ListItemText
     primary={label.name}
@@ -59,41 +56,34 @@ const AppearanceLabelText = ({ label, classes }) => (
   />
 );
 
-const Appearance = ({
-  appearance,
-  labels,
-  classes,
-  active,
-  onChangeActive,
-  onDeleteAppearance
-}) => {
-  const appearanceLabels = appearance.appearanceLabels;
-  const [open, setOpen] = React.useState(false);
+const AppearanceLabel = ({ appearanceLabel, labels, classes, onDelete }) => {
+  //   const [open, setOpen] = React.useState(false);
 
   return (
     <>
-      <ListItem
-        alignItems="flex-start"
-        button
-        selected={active}
-        onClick={() => onChangeActive(appearance.id)}
-      >
+      <ListItem alignItems="flex-start">
+        {/* <ListItemIcon className={classes.voter}>
+          <ThumbUpIcon />
+        </ListItemIcon>
+        <ListItemIcon className={classes.voter}>
+          <ThumbDownIcon />
+        </ListItemIcon> */}
+        <AppearanceLabelText
+          label={labels.byKey[appearanceLabel.labelId]}
+          classes={classes}
+        />
         <ListItemIcon>
-          <IconButton onClick={() => onDeleteAppearance(appearance.id)}>
+          <IconButton onClick={onDelete}>
             <CloseIcon />
           </IconButton>
         </ListItemIcon>
-        <AppearanceLabelText
-          label={labels.byKey[appearanceLabels[0].labelId]}
-          classes={classes}
-        />
-        {open ? (
+        {/* {open ? (
           <ExpandLess onClick={() => setOpen(false)} />
         ) : (
           <ExpandMore onClick={() => setOpen(true)} />
-        )}
+        )} */}
       </ListItem>
-      <Collapse in={open} timeout="auto" unmountOnExit>
+      {/* <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
           {appearanceLabels.map((al, idx) => (
             <ListItem className={classes.nested} key={"sub-app-" + idx}>
@@ -101,55 +91,31 @@ const Appearance = ({
                 label={labels.byKey[al.labelId]}
                 classes={classes}
               />
-              <ListItemIcon className={classes.voter}>
-                <ThumbUpIcon />
-              </ListItemIcon>
-              <ListItemIcon className={classes.voter}>
-                <ThumbDownIcon />
-              </ListItemIcon>
+
             </ListItem>
           ))}
         </List>
-      </Collapse>
+      </Collapse> */}
     </>
   );
 };
 
-const intersperse = (elements, makeInter, makeElement) =>
-  _.flatMap(elements, (a, i) =>
-    i ? [makeInter(i), makeElement(a, i)] : [makeElement(a)]
-  );
-
-const AppearanceList = ({
-  appearances,
-  labels,
-  activeAppearance,
-  onChangeActive,
-  onDeleteAppearance
-}) => {
+const Appearance = ({ appearance, labels, onDeleteAppearanceLabel }) => {
   const classes = useStyles();
-  console.log(activeAppearance);
+  console.log(appearance);
   return (
     <List className={classes.root}>
-      {intersperse(
-        appearances.allIds.map(id => appearances.byKey[id]),
-        i => (
-          <Divider key={"divider-" + i} variant="inset" component="li" />
-        ),
-        (a, i) => (
-          <Appearance
-            key={"appearance-" + i}
-            active={activeAppearance == a.id}
-            appearance={a}
-            onChangeActive={onChangeActive}
-            labels={labels}
-            classes={classes}
-            onDeleteAppearance={onDeleteAppearance}
-          />
-        )
-      )}
+      {appearance.appearanceLabels.map((appearanceLabel, idx) => (
+        <AppearanceLabel
+          key={"appearance-" + idx}
+          appearanceLabel={appearanceLabel}
+          labels={labels}
+          classes={classes}
+          onDelete={() => onDeleteAppearanceLabel(appearanceLabel.id)}
+        />
+      ))}
     </List>
   );
 };
 
-export default AppearanceList;
+export default Appearance;
