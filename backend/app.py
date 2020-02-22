@@ -178,10 +178,15 @@ def handle_connection():
 
 def update_search(*, search, **_):
     with db.session_scope() as session:
-        query = models.FramesQuery(
+        frames_query = models.FramesQuery(
             tbegin=search['start_date'], tend=search['end_date'],
             collection_id=search.get('collection_id'))
-        ntotal, frames = db.get_frames_subsample(session, query, nframes=50)
+
+        ntotal, frames = db.get_frames(session,
+                                       frames_query=frames_query,
+                                       n_frames=search.get('n_frames', 1),
+                                       mode=search.get('mode'),
+                                       after_id=search.get('after_id'))
         frames = [to_dict(frame) for frame in frames]
 
     search_results = {'ntotal': ntotal, 'frames': frames}
@@ -199,8 +204,8 @@ def addto_collection(*, search, collection_id, sample_size, **_):
 
 @socketio.on('action')
 def handle_actions(action):
-    print(action)
     s_action = snakeize_dict_keys(action)
+    print(s_action)
     if action['type'] == "SEARCH_UPDATE":
         update_search(**s_action)
     if action['type'] == "APPEARANCE_ADD":
@@ -215,7 +220,6 @@ def handle_actions(action):
         addto_collection(**s_action)
     if action['type'] == "FRAME_CHANGE":
         change_frame(**s_action)
-
 
 def download_collection(collection_id=28, appearance_needed=True):
     with db.session_scope() as session:

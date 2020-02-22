@@ -59,7 +59,7 @@ const DateTimePicker = ({ date, setDate, label, classes }) => (
   </>
 );
 
-const BrowserNav = ({ search, onSearchUpdate, frames, onTogglePagedMode }) => {
+const BrowserNav = ({ search, onSearchUpdate, frames }) => {
   const classes = useStyles();
   console.log(search.startDate);
   return (
@@ -97,13 +97,15 @@ const BrowserNav = ({ search, onSearchUpdate, frames, onTogglePagedMode }) => {
         />
       </Grid> */}
       <Grid item>
-          <ToggleButtonGroup size="small" value={search.pagination === null ? "all" : "paged"} onChange={(e, mode) => onTogglePagedMode(mode)} exclusive>
-            <ToggleButton key={1} value="all">
-                  All
-            </ToggleButton>
-            <ToggleButton key={2} value="paged">
-                  Paged
-            </ToggleButton>
+          <ToggleButtonGroup
+              size="small"
+              value={search.mode}
+              onChange={(e, mode) => {
+                  onSearchUpdate({...search, ...{mode}})
+              }}
+              exclusive>
+            <ToggleButton key={1} value="subsample">Subsample</ToggleButton>
+            <ToggleButton key={2} value="cont">Continuous</ToggleButton>
         </ToggleButtonGroup>
       </Grid>
 

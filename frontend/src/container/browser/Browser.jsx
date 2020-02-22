@@ -23,8 +23,7 @@ const Browser = ({
   onDeleteCollection,
   onAddCollection,
   onAddToCollection,
-  onClickFrame,
-  onTogglePagedMode
+  onClickFrame
 }) => {
   // There is probably a better way for this
   React.useEffect(() => {
@@ -35,7 +34,7 @@ const Browser = ({
     <Grid container justify="space-between" spacing={1} alignItems="flex-start">
       <Grid container item xs={9} spacing={2}>
         <Grid container item xs={12} spacing={0}>
-          <BrowserNav search={search} onSearchUpdate={onSearchUpdate} frames={frames} onTogglePagedMode={onTogglePagedMode}/>
+          <BrowserNav search={search} onSearchUpdate={onSearchUpdate} frames={frames}/>
           {ntotal ? <div>Total: {ntotal}</div> : <div></div>}
         </Grid>
         <FrameGrid
@@ -88,8 +87,14 @@ export default withStyles(styles)(
       onClickFrame: (collectionId, frameId) => {
         dispatch(a.changeFrame(collectionId, frameId, 0));
         dispatch(a.updateView("FRAME"));
-      },
-      onTogglePagedMode: mode => dispatch(a.togglePagedMode(mode))
+      }
+      // onTogglePagedMode: (search, mode) => {
+      //     if (mode == 'paged') {
+      //         dispatch(a.updateSearch({...search, ...{pagination: { pageSize: 10 }}}))
+      //     } else {
+      //         dispatch(a.updateSearch({...search, ...{pagination: null}}))
+      //     }
+      // }
     })
   )(Browser)
 );

@@ -162,39 +162,30 @@ class DateRange extends React.Component {
     this.state = {
       min: begin,
       max: end,
-      selectedBegin: begin,
-      selectedEnd: end,
       stack: []
     };
   }
 
   onChange([ms1, ms2]) {
-    console.log('onChange!!');
-
-    const selectedBegin = new Date(ms1);
-    const selectedEnd = new Date(ms2);
-
-    this.props.setStartDate(selectedBegin);
-    this.props.setEndDate(selectedEnd);
-
-    this.setState({ selectedBegin, selectedEnd });
+    this.props.setStartDate(new Date(ms1));
+    this.props.setEndDate(new Date(ms2));
   }
 
   zoomIn() {
-    const { selectedBegin, selectedEnd, min, max, stack } = this.state;
-    if (min == selectedBegin && max == selectedEnd) {
+    const { min, max, stack } = this.state;
+    if (min == this.props.startDate && max == this.props.endDate) {
       return;
     }
     stack.push([min, max]);
     this.setState({
-      min: selectedBegin,
-      max: selectedEnd,
+      min: this.props.startDate,
+      max: this.props.endDate,
       stack: stack
     });
   }
 
   zoomOut() {
-    const { selectedBegin, selectedEnd, min, max, stack } = this.state;
+    const { min, max, stack } = this.state;
     if (_.size(stack) == 0) {
       return;
     }
@@ -209,7 +200,7 @@ class DateRange extends React.Component {
   }
 
   render() {
-    const { min, max, selectedBegin, selectedEnd } = this.state;
+    const { min, max } = this.state;
 
     // console.log('frames', this.props.frames);
     const frameTimestamps = this.props.frames.map((frame) => +(new Date(frame.timestamp)));
@@ -255,7 +246,7 @@ class DateRange extends React.Component {
           domain={[+min, +max]}
           // step={1000*60*60*24}
           step={1000}
-          values={[+selectedBegin, +selectedEnd]}
+          values={[+(this.props.startDate), +(this.props.endDate)]}
           onChange={ms => this.onChange(ms)}
           mode={2}
         >
@@ -380,10 +371,10 @@ class DateRange extends React.Component {
           {({ticks}) => {
               return (
                   <div>
-                  {ticks.map(tick =>
+                  {ticks.map((tick, idx) =>
                       (
                       <DataPointTick
-                          key={tick.id}
+                          key={"data-point-tick" + idx}
                           tick={tick}
                       />
                       )

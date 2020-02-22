@@ -82,7 +82,6 @@ def manage_repop():
 
 
 SqlExpr = namedtuple('SqlExpr', ['from_expr', 'where_clauses'])
-Pagination = namedtuple('Pagination', ['after_id', 'pagesize'])
 
 
 def sql_expr(frames_query):
@@ -139,39 +138,42 @@ def frames_query_dict(frames_query):
     return d
 
 
-def fetch_frame_ids(session, frames_query, pagination=None):
+def fetch_frame_ids_continuous(session, frames_query, after_id=None, n_frames=None):
     cursor = get_cursor(session)
 
-    if pagination is None:
+    limit_expr = 'limit %(n_frames)s' if n_frames is not None else ''
+
+    d = frames_query_dict(frames_query)
+    if n_frames is not None:
+        d['n_frames'] = n_frames
+
+    if after_id is None:
         q_unpaged = f'''
         select
             f.id
         from
         {sqlify_sql_expr(sql_expr(frames_query))}
         order by f."timestamp" asc
+        {limit_expr}
         '''
-        print(q)
-        cursor.execute(q_unpaged, frames_query_dict(frames_query))
+        cursor.execute(q_unpaged, d)
     else:
         expr = sql_expr(frames_query)
-        d = frames_query_dict(frames_query)
-        d['pagesize'] = pagination.pagesize
-        if pagination.after_id is not None:
-            expr = SqlExpr(expr.from_expr,
-                           expr.where_clauses +\
-                           ['f."timestamp" > (select "timestamp" from eco.frames ff where ff.id = %(after_id)s limit 1)'])
+        if after_id is not None:
+                expr = SqlExpr(expr.from_expr,
+                               expr.where_clauses +\
+                               ['f."timestamp" > (select "timestamp" from eco.frames ff where ff.id = %(after_id)s limit 1)'])
 
-            d['after_id'] = pagination.after_id
+                d['after_id'] = after_id
         q_paged = f'''
         select
             f.id
         from
         {sqlify_sql_expr(expr)}
         order by f."timestamp" asc
-        limit %(pagesize)s
+        {limit_expr}
         '''
         cursor.execute(q_paged, d)
-        print(q_paged)
 
     rows = cursor.fetchall()
     ids_ = [r[0] for r in rows]
@@ -238,15 +240,24 @@ def fetch_frame_ids_subsample(session, frames_query, nframes):
     return count, ids_
 
 
-def get_frames_subsample(session, frames_query, nframes=10):
-    count, ids = fetch_frame_ids_subsample(session, frames_query=frames_query, nframes=nframes)
+def fetch_frame_ids(session, frames_query, mode, n_frames=None, after_id=None):
+    if mode == 'subsample':
+        count, ids_ = fetch_frame_ids_subsample(session, frames_query=frames_query, nframes=n_frames)
+    elif mode == 'cont':
+        ids_ = fetch_frame_ids_continuous(session, frames_query=frames_query, after_id=after_id, n_frames=n_frames)
+        count = len(ids_)
+    return count, ids_
+
+
+def get_frames(session, frames_query, mode, n_frames, after_id):
+    count, ids = fetch_frame_ids(session, frames_query=frames_query, mode=mode, n_frames=n_frames, after_id=after_id)
     frames = session.query(models.Frame).filter(models.Frame.id.in_(ids)).all()
     return count, frames
 
 
 def collection_add_frames_via_query(session, collection_id, frames_query, nframes=None):
     if nframes is None:
-        ids_ = fetch_frame_ids(session, frames_query)
+        ids_ = fetch_frame_ids_continuous(session, frames_query)
     else:
         _, ids_ = fetch_frame_ids_subsample(session, frames_query, nframes)
 
@@ -257,7 +268,7 @@ def collection_add_frames_via_query(session, collection_id, frames_query, nframe
 
 
 def collection_remove_frames_via_query(session, collection_id, frames_query):
-    ids_ = fetch_frame_ids(session, frames_query)
+    ids_ = fetch_frame_ids_continuous(session, frames_query)
     q = 'delete from eco.collection_frame where collection_id = %s and frame_id in %s'
     cursor = get_cursor(session)
     cursor.execute(q, (collection_id, tuple(ids_)))
@@ -323,13 +334,15 @@ def test():
         tend = datetime.datetime(2019, 11, 16)
         frames_query = FramesQuery(tbegin, tend, None)
 
-        coll = models.Collection(name='foo')
-        session.add(coll)
-        session.flush()
+        return fetch_frame_ids(session, frames_query, mode='cont', n_frames=10, after_id=83688)
 
-        # collection_add_frames_via_query(session, coll.id, frames_query, nframes=100)
-        collection_add_frames_via_query(session, coll.id, frames_query)
-        print(f'collection id: {coll.id}')
+        # coll = models.Collection(name='foo')
+        # session.add(coll)
+        # session.flush()
+
+        # # collection_add_frames_via_query(session, coll.id, frames_query, nframes=100)
+        # collection_add_frames_via_query(session, coll.id, frames_query)
+        # print(f'collection id: {coll.id}')
 
 
 def test2():

@@ -83,11 +83,3 @@ export const addCreator = name => {
     server: true
   };
 };
-
-export const togglePagedMode = mode => {
-  return {
-    type: "TOGGLE_PAGED_MODE",
-    mode,
-    server: true
-  };
-};
