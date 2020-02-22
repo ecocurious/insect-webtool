@@ -237,7 +237,7 @@ def addto_collection(*, search, collection_id, sample_size, **_):
 @socketio.on('action')
 def handle_actions(action):
     s_action = snakeize_dict_keys(action)
-    print(s_action)
+    # print(s_action)
     if action['type'] == "SEARCH_UPDATE":
         update_search(**s_action)
     if action['type'] == "APPEARANCE_ADD":

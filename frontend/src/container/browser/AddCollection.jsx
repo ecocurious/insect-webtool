@@ -22,7 +22,7 @@ const AddCollection = ({ onAddCollection }) => {
         <TextField
           className={classes.collectionName}
           id="standard-basic"
-          label="Collection Name"
+          label="Dataset name"
           onChange={event => setName(event.target.value)}
         />
       </form>
