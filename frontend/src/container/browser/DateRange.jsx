@@ -12,7 +12,7 @@ import ZoomInIcon from "@material-ui/icons/ZoomIn";
 import ZoomOutIcon from "@material-ui/icons/ZoomOut";
 
 // *******************************************************
-// TICK COMPONENT
+// TIME TICK COMPONENT
 // *******************************************************
 export function Tick({ tick, count, format }) {
   return (
@@ -59,6 +59,25 @@ Tick.propTypes = {
 Tick.defaultProps = {
   format: d => d
 };
+
+// *******************************************************
+
+
+export function DataPointTick({ tick }) {
+  return (
+      <div
+        style={{
+          position: "absolute",
+          top: 36,
+          width: 8,
+          height: 8,
+          backgroundColor: "rgb(0, 255, 219)",
+          borderRadius: "50%",
+          left: `${tick.percent}%`
+        }}
+      />
+  );
+}
 
 // *******************************************************
 
@@ -188,6 +207,12 @@ class DateRange extends React.Component {
 
   render() {
     const { min, max, selectedBegin, selectedEnd } = this.state;
+
+    // console.log('frames', this.props.frames);
+    const frameTimestamps = this.props.frames.map((frame) => +(new Date(frame.timestamp)));
+
+    // console.log("frameTimestamps", frameTimestamps);
+
 
     const dateTicks = scaleTime()
       .domain([min, max])
@@ -347,6 +372,25 @@ class DateRange extends React.Component {
               railStyle /* Add a rail as a child.  Later we'll make it interactive. */
             }
           />
+
+          <Ticks values={frameTimestamps}>
+          {({ticks}) => {
+              return (
+                  <div>
+                  {ticks.map(tick =>
+                      (
+                      <DataPointTick
+                          key={tick.id}
+                          tick={tick}
+                      />
+                      )
+                  )}
+                  </div>
+              )
+            }
+          }
+          </Ticks>
+
         </Slider>
       </div>
     );

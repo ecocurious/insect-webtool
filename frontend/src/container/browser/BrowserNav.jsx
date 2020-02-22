@@ -57,7 +57,7 @@ const DateTimePicker = ({ date, setDate, label, classes }) => (
   </>
 );
 
-const BrowserNav = ({ search, onSearchUpdate }) => {
+const BrowserNav = ({ search, onSearchUpdate, frames }) => {
   const classes = useStyles();
   console.log(search.startDate);
   return (
@@ -98,6 +98,7 @@ const BrowserNav = ({ search, onSearchUpdate }) => {
           setStartDate={startDate => onSearchUpdate({ ...search, startDate })}
           endDate={search.endDate}
           setEndDate={endDate => onSearchUpdate({ ...search, endDate })}
+          frames={frames}
         />
       </Grid>
     </Grid>
