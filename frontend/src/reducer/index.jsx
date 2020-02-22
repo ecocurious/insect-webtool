@@ -108,17 +108,11 @@ const search = createReducer(defaultSearch, {
 });
 
 const searchResults = createReducer(
-  { frames: [], ntotal: 0 },
+  { frames: [], ntotal: 0, selectedFrames: {} },
   {
-    SEARCH_UPDATED: (state, action) => action.searchResults
+    SEARCH_UPDATED: (state, action) => ({...(action.searchResults), ...{selectedFrames: {}}}),
+    SELECTED_FRAMES_UPDATE: (state, action) => ({...state, ...{selectedFrames: action.selectedFrames}})
   }
-);
-
-const selectedFrames = createReducer(
-    {},
-    {
-      FRAMES_SELECTION_UPDATE: (state, action) => action.selection
-    }
 );
 
 const reducers = combineReducers({
@@ -131,8 +125,7 @@ const reducers = combineReducers({
   appearances,
   collections,
   labels,
-  creators,
-  selectedFrames
+  creators
 });
 
 export default reducers;

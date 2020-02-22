@@ -12,37 +12,58 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
+import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
+
+
+
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 
+import _ from "lodash";
 
 
 const useStyles = makeStyles({
   sampleSize: {}
 });
 
-const ResultsHeader = ({search, frames, ntotal, onSearchUpdate}) => {
+
+const ResultsHeader = ({search, frames, ntotal, onSearchUpdate, selectedFrames, onSelectedFramesUpdate}) => {
     return (
-        <Grid container>
-            <Grid item xs>
-                <ButtonGroup size="small" aria-label="small outlined button group">
-                  <Button>Select All</Button>
-                  <Button>Add 13 items...</Button>
+        <Grid container justify="flex-start" spacing={2}>
+            <Grid item >
+                <ButtonGroup aria-label="button group">
+                 <Button onClick={() => {
+                     const selectedFrames = _.fromPairs(_.map(frames, (frame) => [frame.id, true]));
+                     onSelectedFramesUpdate(selectedFrames);
+                 }}>Select All</Button>
+                < Button disabled={_.size(selectedFrames) == 0} onClick={() => {
+                    const selectedFrames = {};
+                    onSelectedFramesUpdate(selectedFrames);
+                }}>
+                    Clear Selection
+                </Button>
                 </ButtonGroup>
             </Grid>
-            <Grid item xs>
-                <Grid item xs>
+
+            {_.size(selectedFrames) > 0 ? (
+                <Grid item >
+                    <b>{_.size(selectedFrames) + " selected"}</b>
                 </Grid>
-                <Grid item xs>
-                    <Button onClick={() => {
-                        if (frames) {
-                            const after_id = frames[frames.length-1].id;
-                            onSearchUpdate({...search, ...{after_id}});
-                        }
-                    } }>Next Page<NavigateNextIcon /></Button>
+            ) : null
+            }
+
+            {_.size(selectedFrames) > 0 ? (
+                <Grid item >
+                    <ButtonGroup aria-label="button group">
+                        <Button>
+                            <AddCircleOutlineIcon/>Add To Dataset
+                        </Button>
+                    </ButtonGroup>
                 </Grid>
-            </Grid>
+            ) : null
+            }
+
         </Grid>
     );
 };

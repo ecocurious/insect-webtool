@@ -7,9 +7,14 @@ import _ from "lodash";
 import PropTypes from "prop-types";
 
 import Button from "@material-ui/core/Button";
+import ButtonGroup from '@material-ui/core/ButtonGroup';
 
 import ZoomInIcon from "@material-ui/icons/ZoomIn";
 import ZoomOutIcon from "@material-ui/icons/ZoomOut";
+import ZoomOutMapIcon from '@material-ui/icons/ZoomOutMap';
+import SelectAllIcon from '@material-ui/icons/SelectAll';
+
+
 import Grid from "@material-ui/core/Grid";
 
 // *******************************************************
@@ -156,13 +161,9 @@ class DateRange extends React.Component {
   constructor(props) {
     super();
 
-    const begin = props.startDate;
-    const end = props.endDate;
-
     this.state = {
-      min: begin,
-      max: end,
-      stack: []
+      rangeStartHint: props.startDate,
+      rangeStopHint: props.endDate
     };
   }
 
@@ -171,36 +172,24 @@ class DateRange extends React.Component {
     this.props.setEndDate(new Date(ms2));
   }
 
+  zoomToFrames() {
+  }
+
   zoomIn() {
-    const { min, max, stack } = this.state;
-    if (min == this.props.startDate && max == this.props.endDate) {
-      return;
-    }
-    stack.push([min, max]);
     this.setState({
-      min: this.props.startDate,
-      max: this.props.endDate,
-      stack: stack
+      rangeStartHint: this.props.startDate,
+      rangeStopHint: this.props.endDate,
     });
   }
 
   zoomOut() {
-    const { min, max, stack } = this.state;
-    if (_.size(stack) == 0) {
-      return;
-    }
-
-    const old = stack.pop();
-
-    this.setState({
-      min: old[0],
-      max: old[1],
-      stack: stack
-    });
   }
 
   render() {
-    const { min, max } = this.state;
+    const { rangeStartHint, rangeStopHint } = this.state;
+
+    const rangeStart = new Date(Math.min(+rangeStartHint, +this.props.startDate));
+    const rangeStop = new Date(Math.max(+this.props.endDate, +rangeStopHint));
 
     // console.log('frames', this.props.frames);
     const frameTimestamps = this.props.frames.map((frame) => +(new Date(frame.timestamp)));
@@ -209,32 +198,44 @@ class DateRange extends React.Component {
 
 
     const dateTicks = scaleTime()
-      .domain([min, max])
+      .domain([rangeStart, rangeStop])
       .ticks(11)
       .map(d => +d);
 
     return (
       <Grid container justify="flex-start" spacing={2}>
         <Grid item>
-          <Button
-            variant="outlined"
-            size="small"
-            color="primary"
-            aria-label="add"
-            onClick={() => this.zoomOut()}
-          >
-            <ZoomOutIcon />
-          </Button>
+          <ButtonGroup>
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                aria-label="add"
+                onClick={() => this.zoomOut()}
+              >
+                <ZoomOutIcon />
+              </Button>
 
-          <Button
-            variant="outlined"
-            size="small"
-            color="primary"
-            aria-label="add"
-            onClick={() => this.zoomIn()}
-          >
-            <ZoomInIcon />
-          </Button>
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                aria-label="add"
+                onClick={() => this.zoomIn()}
+              >
+                <ZoomInIcon />
+              </Button>
+
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                aria-label="add"
+                onClick={() => this.props.onZoomToFrames()}
+              >
+                <SelectAllIcon />
+              </Button>
+          </ButtonGroup>
         </Grid>
 
         <Grid item xs>
@@ -243,7 +244,7 @@ class DateRange extends React.Component {
           rootStyle={
             sliderStyle /* inline styles for the outer div. Can also use className prop. */
           }
-          domain={[+min, +max]}
+          domain={[+rangeStart, +rangeStop]}
           // step={1000*60*60*24}
           step={1000}
           values={[+(this.props.startDate), +(this.props.endDate)]}

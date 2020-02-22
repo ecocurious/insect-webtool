@@ -69,7 +69,7 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
   const classes = useStyles();
   console.log(search.startDate);
   return (
-    <Grid container justify="flex-start" spacing={1}>
+    <Grid container justify="flex-start" spacing={1} >
 
       {/* <Grid container item xs={4} spacing={3}> */}
       {/*   <DateTimePicker */}
@@ -140,6 +140,13 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
           endDate={search.endDate}
           setEndDate={endDate => onSearchUpdate({ ...search, endDate })}
           frames={frames}
+          onZoomToFrames={() => {
+              if (frames && _.size(frames) >= 2) {
+                  const startDate = new Date(frames[0].timestamp);
+                  const endDate = new Date(frames[frames.length - 1].timestamp);
+                  onSearchUpdate({startDate, endDate});
+              }
+          }}
         />
       </Grid>
     </Grid>

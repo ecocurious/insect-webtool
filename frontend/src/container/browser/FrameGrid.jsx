@@ -27,26 +27,39 @@ const FrameTile = ({
   timestamp,
   thumbnail,
   selected,
-  showSelect,
-  onClickFrame
+  onClickFrame,
+  selectedFrames,
+  onSelectedFramesUpdate
 }) => {
   const classes = useStyles();
   return (
-    <GridListTile onClick={() => onClickFrame(id)}>
-      <img src={thumbnail} alt={timestamp} className={classes.img} />
+    <GridListTile>
+      <img style={{cursor: "pointer"}} onClick={() => onClickFrame(id)} src={thumbnail} alt={timestamp} className={classes.img} />
       <GridListTileBar
         titlePosition="top"
         actionPosition="left"
         title={id}
         actionIcon={
-          <IconButton aria-label={`select`} className={classes.icon}>
-            {showSelect ? (
+          <IconButton
+              aria-label={`select`}
+              className={classes.icon}
+              onClick={() => {
+                  var sf = _.clone(selectedFrames);
+                  if (selected) {
+                      _.unset(sf, id);
+                  } else {
+                      _.set(sf, id, true);
+                  }
+                  onSelectedFramesUpdate(sf);
+              }}
+          >
+            {(
               selected ? (
                 <CheckBoxIcon />
               ) : (
                 <CheckBoxOutlineBlankIcon />
               )
-            ) : null}
+            )}
           </IconButton>
         }
       />
@@ -54,7 +67,8 @@ const FrameTile = ({
   );
 };
 
-const FrameGrid = ({ frames, showSelect, onClickFrame }) => {
+
+const FrameGrid = ({ frames, showSelect, onClickFrame, selectedFrames, onSelectedFramesUpdate }) => {
   const classes = useStyles();
   return (
     <GridList cellHeight={180} className={classes.gridList} cols={5}>
@@ -62,6 +76,9 @@ const FrameGrid = ({ frames, showSelect, onClickFrame }) => {
         <FrameTile
           key={"frame-" + idx}
           onClickFrame={onClickFrame}
+          selectedFrames={selectedFrames}
+          onSelectedFramesUpdate={onSelectedFramesUpdate}
+          selected={_.has(selectedFrames, frame.id)}
           {...frame}
           //   selected={showSelect ? frames.selectedIds.includes(frame.id) : false}
           //   showSelect={showSelect}
