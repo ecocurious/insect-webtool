@@ -87,15 +87,24 @@ const labels = createReducer(key([]), {
   SERVER_INIT: (state, action) => key(action.labels)
 });
 
+
 const defaultSearch = {
   startDate: new Date("2019-11-15T00:00:00"),
   endDate: new Date("2020-01-31T00:00:00"),
+  pagination: null,
   //   sampleSize: 500,
   collectionId: null
 };
 
 const search = createReducer(defaultSearch, {
-  SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search })
+  SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search }),
+  TOGGLE_PAGED_MODE: (state, action) => {
+      if (action.mode == 'paged') {
+          return {...state, ...{endDate: new Date("2019-11-24T00:00:00")} };
+      }
+      // if (action.mode == 'all') {
+      // }
+  }
 });
 
 const searchResults = createReducer(

@@ -10,6 +10,7 @@ import Button from "@material-ui/core/Button";
 
 import ZoomInIcon from "@material-ui/icons/ZoomIn";
 import ZoomOutIcon from "@material-ui/icons/ZoomOut";
+import Grid from "@material-ui/core/Grid";
 
 // *******************************************************
 // TIME TICK COMPONENT
@@ -168,6 +169,8 @@ class DateRange extends React.Component {
   }
 
   onChange([ms1, ms2]) {
+    console.log('onChange!!');
+
     const selectedBegin = new Date(ms1);
     const selectedEnd = new Date(ms2);
 
@@ -220,8 +223,8 @@ class DateRange extends React.Component {
       .map(d => +d);
 
     return (
-      <div style={{ width: "100%" }}>
-        <div>
+      <Grid container justify="flex-start" spacing={2}>
+        <Grid item>
           <Button
             variant="outlined"
             size="small"
@@ -230,7 +233,6 @@ class DateRange extends React.Component {
             onClick={() => this.zoomOut()}
           >
             <ZoomOutIcon />
-            Zoom Out
           </Button>
 
           <Button
@@ -241,9 +243,10 @@ class DateRange extends React.Component {
             onClick={() => this.zoomIn()}
           >
             <ZoomInIcon />
-            Zoom In
           </Button>
-        </div>
+        </Grid>
+
+        <Grid item xs>
 
         <Slider
           rootStyle={
@@ -392,7 +395,10 @@ class DateRange extends React.Component {
           </Ticks>
 
         </Slider>
-      </div>
+
+        </Grid>
+
+      </Grid>
     );
   }
 }

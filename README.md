@@ -312,8 +312,8 @@ https://observablehq.com/@d3/scale-ticks
 
 ## Browser
 
-- show samples on slider ()
-- continues view with slider
+- show samples on slider (done)
+- continuous view with slider
   - within collection as well as general
   - paginagion (in some way)
 - browser ui: better describtion of what is shown

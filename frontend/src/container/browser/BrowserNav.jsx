@@ -13,6 +13,8 @@ import {
   KeyboardDatePicker
 } from "@material-ui/pickers";
 import DateRange from "./DateRange";
+import ToggleButton from '@material-ui/lab/ToggleButton';
+import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 
 const useStyles = makeStyles({
   datePicker: { width: 150, marginRight: 20 },
@@ -57,27 +59,29 @@ const DateTimePicker = ({ date, setDate, label, classes }) => (
   </>
 );
 
-const BrowserNav = ({ search, onSearchUpdate, frames }) => {
+const BrowserNav = ({ search, onSearchUpdate, frames, onTogglePagedMode }) => {
   const classes = useStyles();
   console.log(search.startDate);
   return (
-    <Grid container justify="space-around" alignItems="flex-end" spacing={5}>
-      <Grid container item xs={4} spacing={3}>
-        <DateTimePicker
-          date={search.startDate}
-          setDate={startDate => onSearchUpdate({ ...search, startDate })}
-          label="Start"
-          classes={classes}
-        />
-      </Grid>
-      <Grid container item xs={4} spacing={3}>
-        <DateTimePicker
-          date={search.endDate}
-          setDate={endDate => onSearchUpdate({ ...search, endDate })}
-          label="End"
-          classes={classes}
-        />
-      </Grid>
+    <Grid container justify="flex-start" spacing={1}>
+
+      {/* <Grid container item xs={4} spacing={3}> */}
+      {/*   <DateTimePicker */}
+      {/*     date={search.startDate} */}
+      {/*     setDate={startDate => onSearchUpdate({ ...search, startDate })} */}
+      {/*     label="Start" */}
+      {/*     classes={classes} */}
+      {/*   /> */}
+      {/* </Grid> */}
+      {/* <Grid container item xs={4} spacing={3}> */}
+      {/*   <DateTimePicker */}
+      {/*     date={search.endDate} */}
+      {/*     setDate={endDate => onSearchUpdate({ ...search, endDate })} */}
+      {/*     label="End" */}
+      {/*     classes={classes} */}
+      {/*   /> */}
+      {/* </Grid> */}
+
       {/* <Grid container item xs={4} spacing={3}>
         <TextField
           className={classes.sampleSize}
@@ -92,7 +96,18 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
           }
         />
       </Grid> */}
-      <Grid container item xs={12} spacing={3}>
+      <Grid item>
+          <ToggleButtonGroup size="small" value={search.pagination === null ? "all" : "paged"} onChange={(e, mode) => onTogglePagedMode(mode)} exclusive>
+            <ToggleButton key={1} value="all">
+                  All
+            </ToggleButton>
+            <ToggleButton key={2} value="paged">
+                  Paged
+            </ToggleButton>
+        </ToggleButtonGroup>
+      </Grid>
+
+      <Grid item xs>
         <DateRange
           startDate={search.startDate}
           setStartDate={startDate => onSearchUpdate({ ...search, startDate })}
