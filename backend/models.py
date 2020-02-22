@@ -35,6 +35,13 @@ def get_thumbnail(url):
     return thumbnail
 
 
+collection_frame = \
+    Table('collection_frame',
+          Base.metadata,
+          Column('collection_id', ForeignKey('collections.id', ondelete='CASCADE'), primary_key=True),
+          Column('frame_id', ForeignKey('frames.id', ondelete='CASCADE'), primary_key=True))
+
+
 class Frame(Base):
     __tablename__ = 'frames'
     id = Column(Integer, Sequence('frame_id_seq'), primary_key=True)
@@ -45,12 +52,7 @@ class Frame(Base):
     def thumbnail(self):
         return get_thumbnail(self.url)
 
-
-collection_frame = \
-    Table('collection_frame',
-          Base.metadata,
-          Column('collection_id', ForeignKey('collections.id', ondelete='CASCADE'), primary_key=True),
-          Column('frame_id', ForeignKey('frames.id', ondelete='CASCADE'), primary_key=True))
+    collections = relationship('Collection', secondary=collection_frame)
 
 
 class Collection(Base):
@@ -85,7 +87,7 @@ class AppearanceLabel(Base):
     __tablename__ = 'appearance_label'
     id = Column(Integer, Sequence('appearance_label_id_seq'), primary_key=True)
     creator = relationship('Creator', backref='appearance_labels')
-    label = relationship('Label', backref='appearance_labels')
+    label = relationship('Label')
     appearance = relationship('Appearance', backref='appearance_labels')
     appearance_id = Column(Integer, ForeignKey('appearances.id'))
     creator_id = Column(Integer, ForeignKey('creators.id'))

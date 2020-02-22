@@ -1,5 +1,7 @@
 import re
 from sqlalchemy.ext.declarative import DeclarativeMeta
+import json
+import numpy as np
 
 
 def to_dict(obj, rels=[], backref=None):
@@ -79,3 +81,23 @@ def camelize_dict_keys(d):
 
 def snakeize_dict_keys(d):
     return transform_dict_keys(d, keyer=snakeize)
+
+
+# credit: https://stackoverflow.com/questions/44146087/pass-user-built-json-encoder-into-flasks-jsonify
+class Better_JSON_ENCODER(json.JSONEncoder):
+    '''
+    Used to help jsonify numpy arrays or lists that contain numpy data types.
+    '''
+    def default(self, obj):
+        print(obj)
+        if isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        elif isinstance(obj, np.ndarray):
+            return obj.tolist()
+        elif isinstance(obj, (datetime.datetime, datetime.date)):
+            print('datetime', obj)
+            return obj.isoformat()
+        else:
+            return super(Better_JSON_ENCODER, self).default(obj)

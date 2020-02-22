@@ -2,35 +2,16 @@ from flask import Flask
 from flask_socketio import SocketIO, send, emit
 import datetime
 import json
-import numpy as np
 from . import db
 from . import models
 
-from .utils import snakeize_dict_keys, camelize_dict_keys, to_dict
+from .utils import snakeize_dict_keys, camelize_dict_keys, to_dict, Better_JSON_ENCODER
 from .models import FramesQuery
 
 from sqlalchemy import inspect
 from sqlalchemy.ext.declarative import DeclarativeMeta
+from sqlalchemy.orm import (joinedload)
 
-
-# credit: https://stackoverflow.com/questions/44146087/pass-user-built-json-encoder-into-flasks-jsonify
-class Better_JSON_ENCODER(json.JSONEncoder):
-    '''
-    Used to help jsonify numpy arrays or lists that contain numpy data types.
-    '''
-    def default(self, obj):
-        print(obj)
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        elif isinstance(obj, (datetime.datetime, datetime.date)):
-            print('datetime', obj)
-            return obj.isoformat()
-        else:
-            return super(Better_JSON_ENCODER, self).default(obj)
 
 
 # credit: https://github.com/miguelgrinberg/Flask-SocketIO/issues/274
@@ -226,6 +207,27 @@ def handle_actions(action):
         pass
 
 
+def download_collection(collection_id=28, appearance_needed=True):
+    with db.session_scope() as session:
+        xs = []
+        f = session.query(models.Frame).\
+            options(joinedload('appearances').joinedload('appearance_labels').joinedload('label')).\
+            filter(models.Frame.collections.any(id=collection_id)).all()
+
+        for i, frame in enumerate(f):
+            d = to_dict(frame, rels=['appearances', 'appearance_labels', 'label'])
+
+            if appearance_needed:
+                include = len(d['appearances']) > 0
+            else:
+                include = True
+
+            if include:
+                xs.append(d)
+
+        return xs
+
+
 def debug():
     socketio.run(app, host='0.0.0.0', debug=True, port=5000)
 
@@ -240,3 +242,13 @@ def test():
 
 #     return obj
 #     _get_by_id(, , rels=[, 'appearance_labels', 'appearance'])
+
+def test_add():
+    collection_id = 32
+    frame_ids = [123124]
+    with db.session_scope() as session:
+        collection = session.query(models.Collection).get(collection_id)
+        for frame_id in frame_ids:
+            frame = session.query(models.Frame).get(frame_id)
+            collection.frames.append(frame)
+        session.flush()
