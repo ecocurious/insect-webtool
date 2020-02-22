@@ -1,106 +1,84 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { Rnd } from "react-rnd";
 
-import Annotation from "react-image-annotation";
-import Rectangle from "./Rectangle";
+const style = {
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  border: "solid 1px #ddd",
+  background: "#f0f0f0"
+};
 
-const useStyles = makeStyles({
-  img: { height: "100%" }
-});
-
-const annotationToAppearance = ({ geometry }) => {
+const annotationToAppearance = ({ x, y, width, height }, imageSize) => {
   return {
-    bboxXmin: geometry.x / 100,
-    bboxXmax: (geometry.x + geometry.width) / 100,
-    bboxYmin: geometry.y / 100,
-    bboxYmax: (geometry.y + geometry.height) / 100
+    bboxXmin: x / imageSize.width,
+    bboxXmax: (x + width) / imageSize.width,
+    bboxYmin: y / imageSize.height,
+    bboxYmax: (y + height) / imageSize.height
   };
 };
 
 const appearanceToAnnotation = (
-  { id, bboxXmin, bboxXmax, bboxYmin, bboxYmax, labelId, creatorId },
-  labels,
-  activeAnnotation
-) => {
-  return {
-    geometry: {
-      x: bboxXmin * 100,
-      y: bboxYmin * 100,
-      width: (bboxXmax - bboxXmin) * 100,
-      height: (bboxYmax - bboxYmin) * 100,
-      type: "RECTANGLE"
-    },
-    data: {
-      //   labels: labels.byKey[labelId],
-      id,
-      creator: "Test",
-      active: activeAnnotation == id
-    }
-  };
-};
+  { bboxXmin, bboxXmax, bboxYmin, bboxYmax },
+  imageSize
+) => ({
+  x: bboxXmin * imageSize.width,
+  y: bboxYmin * imageSize.height,
+  width: (bboxXmax - bboxXmin) * imageSize.width,
+  height: (bboxYmax - bboxYmin) * imageSize.height
+});
 
-const renderHighlight = ({ key, annotation }) => {
+const ImageAnnotation = ({ appearance, imageSize, onBoxUpdate }) => {
+  if (!imageSize) {
+    return null;
+  }
+
+  const [tempPos, setTempPos] = React.useState({
+    width: 200,
+    height: 200,
+    x: 10,
+    y: 10
+  });
+
+  const { bboxXmin, bboxXmax, bboxYmin, bboxYmax } = appearance;
+
+  React.useEffect(() => {
+    setTempPos(appearanceToAnnotation(appearance, imageSize));
+  }, [bboxXmin, bboxXmax, bboxYmin, bboxYmax, imageSize]);
+
+  const updateBox = ({ x, y, height, width }) => {
+    onBoxUpdate(
+      annotationToAppearance(
+        {
+          x,
+          y,
+          height: parseInt(height, 10),
+          width: parseInt(width, 10)
+        },
+        imageSize
+      )
+    );
+    setTempPos({ x, y, height, width });
+  };
+
   return (
-    <React.Fragment key={"rectangle-fragment-" + key}>
-      <div
-        key={"rectangle-label-" + key}
-        style={{
-          position: "absolute",
-          left: `${annotation.geometry.x}%`,
-          top: `${annotation.geometry.y}%`
-        }}
-      >
-        {/* {annotation.data.labels.name} */}
-      </div>
-      <Rectangle
-        key={"rectangle-" + key}
-        annotation={annotation}
-        active={annotation.data.active}
-      />
-    </React.Fragment>
-  );
-};
-
-const ImageAnnotation = ({
-  activeAnnotation,
-  onAddAppearance,
-  appearances,
-  frame,
-  labels
-}) => {
-  const [annotation, setAnnotation] = React.useState({});
-
-  const classes = useStyles();
-
-  const annotations = appearances.allIds.map(id =>
-    appearanceToAnnotation(appearances.byKey[id], labels, activeAnnotation)
-  );
-
-  const onChange = a => {
-    if (a != annotation) {
-      setAnnotation(a);
-      console.log(a);
-    }
-  };
-
-  const onSubmit = () => {
-    if (annotation.geometry) {
-      setAnnotation({});
-      onAddAppearance(annotationToAppearance(annotation));
-    }
-  };
-  return (
-    <Annotation
-      className={classes.img}
-      src={frame.url}
-      renderHighlight={renderHighlight}
-      annotations={annotations}
-      value={annotation}
-      onChange={onChange}
-      onMouseUp={onSubmit}
-      disableOverlay={true}
-      disableEditor={true}
-    />
+    <Rnd
+      style={style}
+      size={{ width: tempPos.width, height: tempPos.height }}
+      position={{ x: tempPos.x, y: tempPos.y }}
+      onDragStop={(e, d) => {
+        updateBox({ ...tempPos, x: d.x, y: d.y });
+      }}
+      onResizeStop={(e, direction, ref, delta, position) => {
+        updateBox({
+          width: ref.style.width,
+          height: ref.style.height,
+          ...position
+        });
+      }}
+    >
+      Rnd
+    </Rnd>
   );
 };
 

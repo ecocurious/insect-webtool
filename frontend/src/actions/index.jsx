@@ -83,3 +83,12 @@ export const addCreator = name => {
     server: true
   };
 };
+
+export const updateBox = (appearanceId, box) => {
+  return {
+    type: "BOX_UPDATE",
+    appearanceId,
+    box,
+    server: true
+  };
+};

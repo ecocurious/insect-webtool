@@ -10,10 +10,45 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 
+import Image from "./Image";
 import ImageAnnotation from "./ImageAnnotation";
+import Selector from "./Selector";
 
 const useStyles = makeStyles({
-  card: {}
+  card: { position: "relative" },
+  outer: {
+    display: "grid",
+    gridTemplate: "1fr / 1fr",
+    placeItems: "center"
+  },
+  img: {
+    height: 500,
+    width: "auto",
+    // position: "relative",
+    gridColumn: "1 / 1",
+    gridRow: "1 / 1",
+    zIndex: 1
+  },
+  annotations: {
+    position: "absolute",
+    zIndex: 3,
+    gridColumn: "1 / 1",
+    gridRow: "1 / 1"
+  },
+  selectorContainer: {
+    position: "absolute",
+    zIndex: 2,
+    gridColumn: "1 / 1",
+    gridRow: "1 / 1"
+  },
+  selector: {
+    position: "absolute",
+    zIndex: 4,
+    border: "dashed 2px black",
+    boxSizing: "border-box",
+    transition: "box-shadow 0.21s ease-in-out",
+    background: "red"
+  }
 });
 
 const ImageCard = ({
@@ -23,9 +58,12 @@ const ImageCard = ({
   appearances,
   collection,
   frame,
-  onChangeFrame
+  onChangeFrame,
+  onUpdateBox
 }) => {
   const classes = useStyles();
+  const [imageSize, setImageSize] = React.useState(null);
+
   return (
     <Card className={classes.card}>
       <CardHeader
@@ -42,18 +80,28 @@ const ImageCard = ({
             </>
           ) : null
         }
-        // subheader="September 14, 2016"
       />
       <CardContent>
-        <ImageAnnotation
-          {...{
-            activelabels,
-            activeAnnotation,
-            onAddAppearance,
-            appearances,
-            frame
-          }}
-        />
+        <div className={classes.outer}>
+          {imageSize ? (
+            <Selector
+              classes={classes}
+              imageSize={imageSize}
+              onSelect={onAddAppearance}
+            />
+          ) : null}
+          <Image url={frame.url} classes={classes} setSize={setImageSize} />
+          <div className={classes.annotations}>
+            {appearances.allIds.map(id => (
+              <ImageAnnotation
+                key={"annotation-" + id}
+                appearance={appearances.byKey[id]}
+                imageSize={imageSize}
+                onBoxUpdate={box => onUpdateBox(id, box)}
+              />
+            ))}
+          </div>
+        </div>
       </CardContent>
     </Card>
   );

@@ -130,6 +130,16 @@ def add_appearance(*, frame_id, appearance, label_ids, creator_id, **_):
     emit_one('APPEARANCE_ADDED', {'appearance': app_dict})
 
 
+def update_box(*, appearance_id, box, **_):
+    with db.session_scope() as session:
+        app = session.query(models.Appearance).get(appearance_id)
+        for k, v in box.items():
+            setattr(app, k, v)
+        session.commit()
+        app_dict = to_dict(app)
+    emit_one('BOX_UPDATED', {'appearance': app_dict})
+
+
 def add_collection(*, name, **_):
     with db.session_scope() as session:
         coll = models.Collection(name=name)
@@ -137,6 +147,7 @@ def add_collection(*, name, **_):
         session.commit()
         coll = to_dict(coll)
     emit_one('COLLECTION_ADDED', {'collection': coll})
+
 
 
 def delete_collection(*, collection_id, **_):
@@ -220,6 +231,8 @@ def handle_actions(action):
         addto_collection(**s_action)
     if action['type'] == "FRAME_CHANGE":
         change_frame(**s_action)
+    if action['type'] == "BOX_UPDATE":
+        update_box(**s_action)
 
 def download_collection(collection_id=28, appearance_needed=True):
     with db.session_scope() as session:

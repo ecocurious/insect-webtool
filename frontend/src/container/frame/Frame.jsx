@@ -28,7 +28,8 @@ const Frame = ({
   collection,
   onChangeFrame,
   onAddAppearance,
-  onDeleteAppearance
+  onDeleteAppearance,
+  onUpdateBox
 }) => {
   console.log(labels);
   if (!frame) {
@@ -77,7 +78,8 @@ const Frame = ({
               appearances,
               frame,
               onChangeFrame: shift =>
-                onChangeFrame(collection.id, frame.id, shift)
+                onChangeFrame(collection.id, frame.id, shift),
+              onUpdateBox
             }}
           />
         </Grid>
@@ -130,6 +132,7 @@ export default connect(
       dispatch(a.changeFrame(collectionId, frameId, shift)),
     onAddAppearance: (frameId, appearance, labelIds) =>
       dispatch(a.addAppearance({ frameId, appearance, labelIds })),
-    onDeleteAppearance: id => dispatch(a.deleteAppearance(id))
+    onDeleteAppearance: id => dispatch(a.deleteAppearance(id)),
+    onUpdateBox: (id, box) => dispatch(a.updateBox(id, box))
   })
 )(Frame);

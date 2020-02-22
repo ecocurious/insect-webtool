@@ -41,6 +41,7 @@
         "react-dom": "^16.8.6",
         "react-image-annotation": "^0.9.10",
         "react-redux": "^7.1.0",
+        "react-rnd": "^10.1.6",
         "redux": "^4.0.4",
         "redux-logger": "^3.0.6",
         "redux-observable": "^1.1.0",
