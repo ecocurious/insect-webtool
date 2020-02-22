@@ -179,12 +179,22 @@ class DateRange extends React.Component {
     const delta = (x, y) => Math.abs(x-y);
 
     if (delta(+this.props.startDate, +startDate) > 2000 || delta(+this.props.endDate, +endDate) > 2000) {
-        this.props.onSearchUpdate({...search, ...{startDate, endDate}});
+        this.props.onSearchUpdate({...search, ...{afterId: null}, ...{startDate, endDate}});
     }
 
     // if (this.props.endDate != endDate) {
     //     // console.log('this.props.endDate != endDate', this.props.endDate, endDate);
     // }
+  }
+
+  selectFullRange() {
+    const search = this.props.search;
+    const { rangeStartHint, rangeStopHint } = this.state;
+
+    const startDate = new Date(Math.min(+rangeStartHint, +this.props.startDate));
+    const endDate = new Date(Math.max(+this.props.endDate, +rangeStopHint));
+
+    this.props.onSearchUpdate({...search, ...{afterId: null} , ...{startDate, endDate}});
   }
 
   zoomToFrames() {
@@ -259,6 +269,16 @@ class DateRange extends React.Component {
                 onClick={() => this.props.onZoomToFrames()}
               >
                 <SelectAllIcon />
+              </Button>
+
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                aria-label="add"
+                onClick={() => this.selectFullRange()}
+              >
+                <ZoomOutMapIcon />
               </Button>
           </ButtonGroup>
         </Grid>

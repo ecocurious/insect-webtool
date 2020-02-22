@@ -114,7 +114,8 @@ const defaultSearch = {
 };
 
 const search = createReducer(defaultSearch, {
-  SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search })
+    SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search }),
+    UPDATE_START_END: (state, action) => ({...state, ...{after_id: null, startDate: action.startDate, endDate: action.endDate}})
 });
 
 const searchResults = createReducer(

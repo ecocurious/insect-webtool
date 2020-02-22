@@ -88,21 +88,6 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
       {/*   /> */}
       {/* </Grid> */}
 
-      {/* <Grid container item xs={4} spacing={3}>
-        <TextField
-          className={classes.sampleSize}
-          id="standard-basic"
-          label="Number of Samples"
-          value={search.sampleSize}
-          onChange={event =>
-            onSearchUpdate({
-              ...search,
-              sampleSize: parseInt(event.target.value)
-            })
-          }
-        />
-      </Grid> */}
-
 
       <Grid item>
           <ToggleButtonGroup
@@ -137,8 +122,6 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
         <DateRange
           startDate={search.startDate}
           endDate={search.endDate}
-          // setStartDate={startDate => onSearchUpdate({ ...search, startDate })}
-          // setEndDate={endDate => onSearchUpdate({ ...search, endDate })}
           search={search}
           onSearchUpdate={onSearchUpdate}
 
