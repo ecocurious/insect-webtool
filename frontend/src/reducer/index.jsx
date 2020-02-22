@@ -39,7 +39,7 @@ const remove = ({ byKey, allIds }, id) => ({
 
 const append = ({ byKey, allIds }, newObj) => ({
   byKey: { ...byKey, [newObj.id]: newObj },
-  allIds: [...allIds, newObj.id]
+  allIds: allIds.includes(newObj.id) ? allIds : [...allIds, newObj.id]
 });
 
 const collections = createReducer(key([]), {
@@ -68,8 +68,15 @@ const appearances = createReducer(
   {
     APPEARANCE_ADDED: (state, action) => ({
       ...state,
-      byKey: { ...state.byKey, [action.appearance.id]: action.appearance },
-      allIds: [...state.allIds, action.appearance.id]
+      ...append(state, action.appearance)
+    }),
+    APPEARANCE_LABEL_DELETED: (state, action) => ({
+      ...state,
+      ...append(state, action.appearance)
+    }),
+    APPEARANCE_LABEL_ADDED: (state, action) => ({
+      ...state,
+      ...append(state, action.appearance)
     }),
     APPEARANCES_FLUSH: (state, action) => ({
       frameId: action.frame.id,
@@ -87,7 +94,6 @@ const labels = createReducer(key([]), {
   SERVER_INIT: (state, action) => key(action.labels)
 });
 
-
 const defaultSearch = {
   startDate: new Date("2019-11-15T00:00:00"),
   endDate: new Date("2020-01-31T00:00:00"),
@@ -98,7 +104,7 @@ const defaultSearch = {
 };
 
 const search = createReducer(defaultSearch, {
-  SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search }),
+  SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search })
 });
 
 const searchResults = createReducer(

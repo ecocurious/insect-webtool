@@ -28,7 +28,13 @@ const appearanceToAnnotation = (
   height: (bboxYmax - bboxYmin) * imageSize.height
 });
 
-const ImageAnnotation = ({ appearance, imageSize, onBoxUpdate }) => {
+const ImageAnnotation = ({
+  appearance,
+  imageSize,
+  onBoxUpdate,
+  onClick,
+  active
+}) => {
   if (!imageSize) {
     return null;
   }
@@ -63,9 +69,10 @@ const ImageAnnotation = ({ appearance, imageSize, onBoxUpdate }) => {
 
   return (
     <Rnd
-      style={style}
+      style={{ ...style, background: active ? "red" : "grey" }}
       size={{ width: tempPos.width, height: tempPos.height }}
       position={{ x: tempPos.x, y: tempPos.y }}
+      onClick={onClick}
       onDragStop={(e, d) => {
         updateBox({ ...tempPos, x: d.x, y: d.y });
       }}

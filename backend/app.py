@@ -104,6 +104,28 @@ def load_collection(collection_id):
     emit_one('COLLECTION_LOADED', {'collection': coll})
 
 
+def delete_appearance_label(*, appearance_label_id, **_):
+    with db.session_scope() as session:
+        applabel = session.query(models.AppearanceLabel).get(appearance_label_id)
+        app = applabel.appearance
+        session.delete(applabel)
+        session.commit()
+        app_dicts = to_dict(app, rels=['appearance_labels'])
+    emit_one('APPEARANCE_LABEL_DELETED', {'appearance': app_dicts})
+
+
+def add_appearance_label(*, appearance_id, label_id, creator_id, **_):
+    with db.session_scope() as session:
+        creator = session.query(models.Creator).get(creator_id)
+        label = session.query(models.Label).get(label_id)
+        appearance = session.query(models.Appearance).get(appearance_id)
+        app_label = models.AppearanceLabel(creator=creator, appearance=appearance, label=label)
+        session.add(app_label)
+        session.commit()
+        app_dict = to_dict(appearance, rels=['appearance_labels'])
+    emit_one('APPEARANCE_LABEL_ADDED', {'appearance': app_dict})
+
+
 def delete_appearance(*, appearance_id, **_):
     with db.session_scope() as session:
         app = session.query(models.Appearance).get(appearance_id)
@@ -233,6 +255,10 @@ def handle_actions(action):
         change_frame(**s_action)
     if action['type'] == "BOX_UPDATE":
         update_box(**s_action)
+    if action['type'] == "APPEARANCE_LABEL_DELETE":
+        delete_appearance_label(**s_action)
+    if action['type'] == "APPEARANCE_LABEL_ADD":
+        add_appearance_label(**s_action)
 
 def download_collection(collection_id=28, appearance_needed=True):
     with db.session_scope() as session:
