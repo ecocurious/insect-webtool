@@ -88,13 +88,6 @@ export default withStyles(styles)(
         dispatch(a.changeFrame(collectionId, frameId, 0));
         dispatch(a.updateView("FRAME"));
       }
-      // onTogglePagedMode: (search, mode) => {
-      //     if (mode == 'paged') {
-      //         dispatch(a.updateSearch({...search, ...{pagination: { pageSize: 10 }}}))
-      //     } else {
-      //         dispatch(a.updateSearch({...search, ...{pagination: null}}))
-      //     }
-      // }
     })
   )(Browser)
 );

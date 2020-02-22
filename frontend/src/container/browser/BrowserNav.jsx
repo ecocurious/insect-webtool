@@ -15,6 +15,7 @@ import {
 import DateRange from "./DateRange";
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import _ from "lodash";
 
 const useStyles = makeStyles({
   datePicker: { width: 150, marginRight: 20 },
@@ -101,7 +102,11 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
               size="small"
               value={search.mode}
               onChange={(e, mode) => {
-                  onSearchUpdate({...search, ...{mode}})
+                  var afterId = null;
+                  if (frames && _.size(frames) > 0) {
+                      afterId = frames[0].id
+                  }
+                  onSearchUpdate({...search, ...{mode, afterId}})
               }}
               exclusive>
             <ToggleButton key={1} value="subsample">Subsample</ToggleButton>
