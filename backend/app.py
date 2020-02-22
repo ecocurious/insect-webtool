@@ -90,6 +90,7 @@ def _get_by_id(model, id, rels=[]):
         obj = to_dict(obj, rels=rels)
     return obj
 
+
 def emit_one(action_name, payload):
     payload = camelize_dict_keys(payload)
     emit('action', {"type": action_name, **payload})
@@ -114,15 +115,15 @@ def delete_appearance(*, appearance_id, **_):
     emit_one('APPEARANCES_FLUSH', {'appearances': app_dicts, 'frameId': frame_id})
 
 
-def add_appearance(*, frame_id, appearance, label_ids, **_):
+def add_appearance(*, frame_id, appearance, label_ids, creator_id, **_):
     with db.session_scope() as session:
         frame = session.query(models.Frame).get(frame_id)
+        creator = session.query(models.Creator).get(creator_id)
         labels = session.query(models.Label).filter(models.Label.id.in_(label_ids)).all()
-        print('appearance', appearance)
-        app = models.Appearance(frame=frame, **appearance)
+        app = models.Appearance(frame=frame, creator=creator, **appearance)
         session.add(app)
         for label in labels:
-            appLabel = models.AppearanceLabel(appearance=app, label=label)
+            appLabel = models.AppearanceLabel(creator=creator, appearance=app, label=label)
             session.add(appLabel)
         session.commit()
         app_dict = to_dict(app, rels=['appearance_labels'])
@@ -140,8 +141,8 @@ def add_collection(*, name, **_):
 
 def delete_collection(*, collection_id, **_):
     with db.session_scope() as session:
-        app = session.query(models.Appearance).get(collection_id)
-        session.delete(app)
+        coll = session.query(models.Collection).get(collection_id)
+        session.delete(coll)
         session.commit()
     emit_one('COLLECTION_DELETED', {'collectionId': collection_id})
 
@@ -151,24 +152,28 @@ def get_frame_appearances(*, frame_id, **_):
         frame = session.query(models.Frame).get(frame_id)
         apps = frame.appearances
         app_dicts = [to_dict(a, rels=['appearance_labels']) for a in apps]
-    emit_one('APPEARANCES_FLUSH', {'appearances': app_dicts, 'frameId': frame_id})
+        frame_dict = to_dict(frame)
+    emit_one('APPEARANCES_FLUSH', {'frame': frame_dict, 'appearances': app_dicts})
 
+
+def change_frame(*, frame_id, collection_id, shift, **_):
+    with db.session_scope() as session:
+        if shift != 0:
+            assert collection_id, 'Collection need to be defined when useing shift.'
+            frame_id = db.navigate_frame(session, collection_id, frame_id, shift)
+        frame = session.query(models.Frame).get(frame_id)
+        apps = frame.appearances
+        app_dicts = [to_dict(a, rels=['appearance_labels']) for a in apps]
+        frame_dict = to_dict(frame)
+    emit_one('APPEARANCES_FLUSH', {'frame': frame_dict, 'appearances': app_dicts})
 
 @socketio.on('connect')
 def handle_connection():
     labels = _get_all(models.Label)
     collections = _get_all(models.Collection)
-    # frames = [_get_by_id(models.Frame, 123124, rels=['appearances', 'appearance_labels', 'appearance'])]
-    frames = [_get_by_id(models.Frame, 96339)]
-    # emit_one('SERVER_INIT', {'labels': [to_dict(l) for l in labels], 'collections': [to_dict(c) for c in collections], 'frames': [to_dict(f) for f in frames]})
-    # frames_result = [to_dict(f) for f in frames]
-    # import pdb; pdb.set_trace()
-    # emit_one('SERVER_INIT', {'labels': [], 'collections': [], 'frames': [to_dict(f) for f in frames]})
-
-    # import pdb; pdb.set_trace()
-    emit_one('SERVER_INIT', {'labels': labels, 'collections': collections, 'frames': frames})
-    # get_frame_appearances(frame_id=123124)
-    # load_collection(7)
+    creators = _get_all(models.Creator)
+    emit_one('SERVER_INIT', {'labels': labels, 'collections': collections, 'creators': creators})
+    get_frame_appearances(frame_id=96339)
 
 
 def update_search(*, search, **_):
@@ -176,17 +181,20 @@ def update_search(*, search, **_):
         query = models.FramesQuery(
             tbegin=search['start_date'], tend=search['end_date'],
             collection_id=search.get('collection_id'))
-        ntotal, frames = db.get_frames_subsample(session, query, nframes=search['sample_size'])
-        frames = [{**to_dict(frame), "thumbnail": frame.thumbnail} for frame in frames]
+        ntotal, frames = db.get_frames_subsample(session, query, nframes=50)
+        frames = [to_dict(frame) for frame in frames]
 
     search_results = {'ntotal': ntotal, 'frames': frames}
+    emit_one('SEARCH_UPDATED', {'searchResults': search_results, 'search': search})
 
-    # print(f'ntotal: {ntotal}')
-    print(f'ntotal: {ntotal}')
-    print(f'len(frames): {len(search_results["frames"])}')
 
-    # print(search_results)
-    emit('action', {"type": 'SEARCH_UPDATED', 'searchResults': search_results})
+def addto_collection(*, search, collection_id, sample_size, **_):
+    with db.session_scope() as session:
+        query = models.FramesQuery(
+            tbegin=search['start_date'], tend=search['end_date'],
+            collection_id=search.get('collection_id'))
+        db.collection_add_frames_via_query(
+            session, collection_id, query, nframes=sample_size)
 
 
 @socketio.on('action')
@@ -203,9 +211,10 @@ def handle_actions(action):
         add_collection(**s_action)
     if action['type'] == "COLLECTION_DELETE":
         delete_collection(**s_action)
-    if action['type'] == "COLLECTIONFRAME_SELECT":
-        pass
-
+    if action['type'] == "COLLECTION_ADDTO":
+        addto_collection(**s_action)
+    if action['type'] == "FRAME_CHANGE":
+        change_frame(**s_action)
 
 def download_collection(collection_id=28, appearance_needed=True):
     with db.session_scope() as session:

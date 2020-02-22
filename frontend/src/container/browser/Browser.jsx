@@ -7,6 +7,7 @@ import FrameGrid from "./FrameGrid";
 import BrowserNav from "./BrowserNav";
 import CollectionList from "./CollectionList";
 import AddCollection from "./AddCollection";
+import AddToCollection from "./AddToCollection";
 
 import Grid from "@material-ui/core/Grid";
 
@@ -20,7 +21,9 @@ const Browser = ({
   collections,
   activeCollection,
   onDeleteCollection,
-  onAddCollection
+  onAddCollection,
+  onAddToCollection,
+  onClickFrame
 }) => {
   // There is probably a better way for this
   React.useEffect(() => {
@@ -33,11 +36,22 @@ const Browser = ({
         <Grid container item xs={12} spacing={0}>
           <BrowserNav search={search} onSearchUpdate={onSearchUpdate} />
           {ntotal ? <div>Total: {ntotal}</div> : <div></div>}
-          {"asdoasdoasd"}
         </Grid>
-        <FrameGrid frames={frames} />
+        <FrameGrid
+          frames={frames}
+          showSelect={true}
+          onClickFrame={frameId => onClickFrame(activeCollection, frameId)}
+        />
       </Grid>
       <Grid container item xs={3} spacing={2}>
+        <Grid container item xs={12} spacing={0}>
+          <AddToCollection
+            onAddToCollection={(collectionId, sampleSize) =>
+              onAddToCollection({ collectionId, sampleSize, search })
+            }
+            collections={collections}
+          />
+        </Grid>
         <Grid container item xs={12} spacing={0}>
           <CollectionList
             collections={collections}
@@ -68,7 +82,12 @@ export default withStyles(styles)(
     (dispatch, ownProps) => ({
       onSearchUpdate: search => dispatch(a.updateSearch(search)),
       onDeleteCollection: id => dispatch(a.deleteCollection(id)),
-      onAddCollection: collection => dispatch(a.addCollection(collection))
+      onAddCollection: collection => dispatch(a.addCollection(collection)),
+      onAddToCollection: data => dispatch(a.addToCollection(data)),
+      onClickFrame: (collectionId, frameId) => {
+        dispatch(a.changeFrame(collectionId, frameId, 0));
+        dispatch(a.updateView("FRAME"));
+      }
     })
   )(Browser)
 );

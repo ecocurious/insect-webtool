@@ -121,7 +121,7 @@ const Frame = ({
 export default connect(
   (state, ownProps) => ({
     collection: state.collections.byKey[state.ui.activeCollection],
-    frame: state.frames.byKey[state.ui.activeFrame],
+    frame: state.frame,
     labels: state.labels,
     appearances: state.appearances
   }),

@@ -7,11 +7,13 @@ const view = createReducer("BROWSER", {
 });
 
 const ui = createReducer(
-  { activeFrame: null, activeCollection: null },
+  { activeCollection: null },
   {
     SERVER_INIT: (state, action) => ({
-      activeFrame: action.frames[0].id,
       activeCollection: action.collections[0].id
+    }),
+    SEARCH_UPDATED: (state, action) => ({
+      activeCollection: action.search.collectionId
     })
   }
 );
@@ -25,6 +27,16 @@ const key = list => ({
   allIds: _.map(list, ({ id }) => id)
 });
 
+const keyFirstActive = list => {
+  const keyed = key(list);
+  return { ...keyed, active: keyed.allIds[0] };
+};
+
+const remove = ({ byKey, allIds }, id) => ({
+  byKey: _.omit(byKey, [id]),
+  allIds: _.without(allIds, id)
+});
+
 const append = ({ byKey, allIds }, newObj) => ({
   byKey: { ...byKey, [newObj.id]: newObj },
   allIds: [...allIds, newObj.id]
@@ -32,7 +44,8 @@ const append = ({ byKey, allIds }, newObj) => ({
 
 const collections = createReducer(key([]), {
   SERVER_INIT: (state, action) => key(action.collections),
-  COLLECTION_ADDED: (state, action) => append(state, action.collection)
+  COLLECTION_ADDED: (state, action) => append(state, action.collection),
+  COLLECTION_DELETED: (state, action) => remove(state, action.collectionId)
 });
 
 // const collection = createReducer(
@@ -45,8 +58,9 @@ const collections = createReducer(key([]), {
 //   }
 // );
 
-const frames = createReducer(key([]), {
-  SERVER_INIT: (state, action) => ({ ...key(action.frames), selectedIds: [] })
+const frame = createReducer(null, {
+  //   SERVER_INIT: (state, action) => ({ ...key(action.frames), selectedIds: [] }),
+  APPEARANCES_FLUSH: (state, action) => action.frame
 });
 
 const appearances = createReducer(
@@ -58,11 +72,16 @@ const appearances = createReducer(
       allIds: [...state.allIds, action.appearance.id]
     }),
     APPEARANCES_FLUSH: (state, action) => ({
-      frameId: action.frameId,
+      frameId: action.frame.id,
       ...key(action.appearances)
     })
   }
 );
+
+const creators = createReducer(keyFirstActive([]), {
+  SERVER_INIT: (state, action) => keyFirstActive(action.creators),
+  CREATOR_SELECT: (state, action) => ({ ...state, active: action.creatorId })
+});
 
 const labels = createReducer(key([]), {
   SERVER_INIT: (state, action) => key(action.labels)
@@ -71,7 +90,7 @@ const labels = createReducer(key([]), {
 const defaultSearch = {
   startDate: new Date("2019-11-15T00:00:00"),
   endDate: new Date("2020-01-31T00:00:00"),
-  sampleSize: 500,
+  //   sampleSize: 500,
   collectionId: null
 };
 
@@ -92,10 +111,11 @@ const reducers = combineReducers({
   search,
   searchResults,
   liveImage,
-  frames,
+  frame,
   appearances,
   collections,
-  labels
+  labels,
+  creators
 });
 
 export default reducers;

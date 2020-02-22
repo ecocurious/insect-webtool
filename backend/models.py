@@ -112,5 +112,7 @@ class Appearance(Base):
     bbox_ymin = Column(Float)
     bbox_ymax = Column(Float)
     creator_id = Column(Integer, ForeignKey('creators.id'))
+    creator = relationship('Creator', backref='appearance')
+
 
 ################################################################################

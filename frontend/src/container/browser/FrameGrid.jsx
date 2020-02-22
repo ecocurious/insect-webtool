@@ -22,10 +22,17 @@ const useStyles = makeStyles({
   }
 });
 
-const FrameTile = ({ id, timestamp, thumbnail, selected, showSelect }) => {
+const FrameTile = ({
+  id,
+  timestamp,
+  thumbnail,
+  selected,
+  showSelect,
+  onClickFrame
+}) => {
   const classes = useStyles();
   return (
-    <GridListTile>
+    <GridListTile onClick={() => onClickFrame(id)}>
       <img src={thumbnail} alt={timestamp} className={classes.img} />
       <GridListTileBar
         titlePosition="top"
@@ -47,16 +54,17 @@ const FrameTile = ({ id, timestamp, thumbnail, selected, showSelect }) => {
   );
 };
 
-const FrameGrid = ({ frames, showSelect }) => {
+const FrameGrid = ({ frames, showSelect, onClickFrame }) => {
   const classes = useStyles();
   return (
     <GridList cellHeight={180} className={classes.gridList} cols={5}>
       {frames.map((frame, idx) => (
         <FrameTile
           key={"frame-" + idx}
+          onClickFrame={onClickFrame}
           {...frame}
-          selected={showSelect ? frames.selectedIds.includes(frame.id) : false}
-          showSelect={showSelect}
+          //   selected={showSelect ? frames.selectedIds.includes(frame.id) : false}
+          //   showSelect={showSelect}
         />
       ))}
     </GridList>

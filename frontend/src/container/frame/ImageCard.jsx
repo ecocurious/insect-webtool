@@ -29,16 +29,18 @@ const ImageCard = ({
   return (
     <Card className={classes.card}>
       <CardHeader
-        title={frame.timestamp + " - " + collection.name}
+        title={frame.timestamp + (collection ? " - " + collection.name : "")}
         action={
-          <>
-            <IconButton aria-label="before" onClick={() => onChangeFrame(-1)}>
-              <NavigateBeforeIcon />
-            </IconButton>
-            <IconButton aria-label="next" onClick={() => onChangeFrame(1)}>
-              <NavigateNextIcon />
-            </IconButton>
-          </>
+          collection ? (
+            <>
+              <IconButton aria-label="before" onClick={() => onChangeFrame(-1)}>
+                <NavigateBeforeIcon />
+              </IconButton>
+              <IconButton aria-label="next" onClick={() => onChangeFrame(1)}>
+                <NavigateNextIcon />
+              </IconButton>
+            </>
+          ) : null
         }
         // subheader="September 14, 2016"
       />

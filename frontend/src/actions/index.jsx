@@ -57,3 +57,29 @@ export const addCollection = ({ name }) => {
     server: true
   };
 };
+
+export const addToCollection = ({ search, collectionId, sampleSize }) => {
+  return {
+    type: "COLLECTION_ADDTO",
+    search,
+    collectionId,
+    sampleSize,
+    server: true
+  };
+};
+
+export const selectCreator = creatorId => {
+  return {
+    type: "CREATOR_SELECT",
+    creatorId,
+    server: true
+  };
+};
+
+export const addCreator = name => {
+  return {
+    type: "CREATOR_ADD",
+    name,
+    server: true
+  };
+};
