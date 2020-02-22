@@ -216,6 +216,7 @@ def handle_actions(action):
     if action['type'] == "FRAME_CHANGE":
         change_frame(**s_action)
 
+
 def download_collection(collection_id=28, appearance_needed=True):
     with db.session_scope() as session:
         xs = []
