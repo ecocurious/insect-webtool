@@ -92,3 +92,11 @@ export const updateBox = (appearanceId, box) => {
     server: true
   };
 };
+
+export const updateFramesSelection = (selection) => {
+  return {
+    type: "FRAMES_SELECTION_UPDATE",
+    selection,
+    server: false
+  };
+}

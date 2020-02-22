@@ -108,6 +108,13 @@ const searchResults = createReducer(
   }
 );
 
+const selectedFrames = createReducer(
+    {},
+    {
+      FRAMES_SELECTION_UPDATE: (state, action) => action.selection
+    }
+);
+
 const reducers = combineReducers({
   view,
   ui,
@@ -118,7 +125,8 @@ const reducers = combineReducers({
   appearances,
   collections,
   labels,
-  creators
+  creators,
+  selectedFrames
 });
 
 export default reducers;

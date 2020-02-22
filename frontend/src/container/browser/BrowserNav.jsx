@@ -15,6 +15,11 @@ import {
 import DateRange from "./DateRange";
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+
+
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import _ from "lodash";
 
 const useStyles = makeStyles({
@@ -97,6 +102,8 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
           }
         />
       </Grid> */}
+
+
       <Grid item>
           <ToggleButtonGroup
               size="small"
@@ -113,6 +120,18 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
             <ToggleButton key={2} value="cont">Continuous</ToggleButton>
         </ToggleButtonGroup>
       </Grid>
+
+       <Grid item>
+               <Select value={search.nFrames} onChange={(e1, val) => {
+                   const nFrames = val.props.value;
+                   onSearchUpdate({...search, ...{nFrames}});
+               }}>
+                 <MenuItem value={10}>10</MenuItem>
+                 <MenuItem value={20}>20</MenuItem>
+                 <MenuItem value={50}>50</MenuItem>
+                 <MenuItem value={100}>100</MenuItem>
+               </Select>
+       </Grid>
 
       <Grid item xs>
         <DateRange

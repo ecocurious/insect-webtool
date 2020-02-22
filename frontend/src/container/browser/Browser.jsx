@@ -33,7 +33,7 @@ const Browser = ({
 
   return (
     <Grid container justify="space-between" spacing={1} alignItems="flex-start">
-      <Grid container item xs={9} spacing={2}>
+      <Grid container item direction="column" xs={9} spacing={2}>
         <Grid container item xs={12} spacing={0}>
           <BrowserNav search={search} onSearchUpdate={onSearchUpdate} frames={frames}/>
         </Grid>
