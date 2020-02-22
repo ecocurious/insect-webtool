@@ -65,7 +65,7 @@ const BrowserNav = ({ search, onSearchUpdate }) => {
       <Grid container item xs={4} spacing={3}>
         <DateTimePicker
           date={search.startDate}
-          setDate={startDate => onSearchUpdate({ startDate })}
+          setDate={startDate => onSearchUpdate({ ...search, startDate })}
           label="Start"
           classes={classes}
         />
@@ -73,7 +73,7 @@ const BrowserNav = ({ search, onSearchUpdate }) => {
       <Grid container item xs={4} spacing={3}>
         <DateTimePicker
           date={search.endDate}
-          setDate={endDate => onSearchUpdate({ endDate })}
+          setDate={endDate => onSearchUpdate({ ...search, endDate })}
           label="End"
           classes={classes}
         />
