@@ -200,6 +200,7 @@ def fetch_frame_ids_subsample(session, frames_query, nframes):
     ages as (
         select
             id,
+            timestamp,
             extract(epoch from age("timestamp", (select "min" from bounds limit 1))) age
         from
         {sqlify_sql_expr(sql_expr(frames_query))}
@@ -209,6 +210,7 @@ def fetch_frame_ids_subsample(session, frames_query, nframes):
     cmps as (
         select
             id,
+            timestamp,
             floor(%(n)s * age / (select max(age) from ages))::int as n,
             lag(floor(%(n)s * age / (select max(age) from ages))::int) over () as n_lag
         from
@@ -220,11 +222,13 @@ def fetch_frame_ids_subsample(session, frames_query, nframes):
     from cmps
     where n != n_lag
         or n_lag is null
+    order by timestamp asc
     '''
     d = frames_query_dict(frames_query)
     d['n'] = nframes
     cursor = get_cursor(session)
     cursor.execute(q, d)
+
     rows = cursor.fetchall()
     ids_ = [r[0] for r in rows]
 
@@ -251,7 +255,11 @@ def fetch_frame_ids(session, frames_query, mode, n_frames=None, after_id=None):
 
 def get_frames(session, frames_query, mode, n_frames, after_id):
     count, ids = fetch_frame_ids(session, frames_query=frames_query, mode=mode, n_frames=n_frames, after_id=after_id)
-    frames = session.query(models.Frame).filter(models.Frame.id.in_(ids)).all()
+
+    fobs = session.query(models.Frame).filter(models.Frame.id.in_(ids)).all()
+    d = {fob.id: fob for fob in fobs}
+    frames = [d[id_] for id_ in ids]
+
     return count, frames
 
 

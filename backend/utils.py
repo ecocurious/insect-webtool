@@ -90,7 +90,7 @@ class Better_JSON_ENCODER(json.JSONEncoder):
     Used to help jsonify numpy arrays or lists that contain numpy data types.
     '''
     def default(self, obj):
-        print(obj)
+        # print(obj)
         if isinstance(obj, np.integer):
             return int(obj)
         elif isinstance(obj, np.floating):
@@ -98,7 +98,7 @@ class Better_JSON_ENCODER(json.JSONEncoder):
         elif isinstance(obj, np.ndarray):
             return obj.tolist()
         elif isinstance(obj, (datetime.datetime, datetime.date)):
-            print('datetime', obj)
+            # print('datetime', obj)
             return obj.isoformat()
         else:
             return super(Better_JSON_ENCODER, self).default(obj)
