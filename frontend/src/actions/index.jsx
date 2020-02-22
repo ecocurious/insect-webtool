@@ -110,10 +110,17 @@ export const updateBox = (appearanceId, box) => {
   };
 };
 
-export const updateSelectedFrames = (selectedFrames) => {
+export const updateSelectedFrames = selectedFrames => {
   return {
     type: "SELECTED_FRAMES_UPDATE",
     selectedFrames,
     server: false
   };
-}
+};
+
+export const setActiveAppearance = appearanceId => {
+  return {
+    type: "AKTIVE_APPEARANCE_SET",
+    appearanceId
+  };
+};

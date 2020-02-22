@@ -25,6 +25,7 @@ const useStyles = makeStyles({
 const Frame = ({
   labels,
   frame,
+  activeAppearance,
   appearances,
   collection,
   onChangeFrame,
@@ -32,7 +33,8 @@ const Frame = ({
   onDeleteAppearance,
   onUpdateBox,
   onDeleteAppearanceLabel,
-  onAddAppearanceLabel
+  onAddAppearanceLabel,
+  setActiveAppearance
 }) => {
   if (!frame) {
     return null;
@@ -40,14 +42,7 @@ const Frame = ({
 
   const classes = useStyles();
   const [activeLabel, setActiveLabel] = React.useState(labels.allIds[0]);
-  const [activeAppearance, setActiveAppearance] = React.useState();
-  const [editMode, setEditMode] = React.useState(false);
-
-  console.log(
-    appearances,
-    activeAppearance,
-    appearances.byKey[activeAppearance]
-  );
+  //   const [activeAppearance, setActiveAppearance] = React.useState();
 
   return (
     <Grid container justify="space-between" spacing={1} alignItems="flex-start">
@@ -65,6 +60,7 @@ const Frame = ({
             onChangeFrame={shift =>
               onChangeFrame(collection.id, frame.id, shift)
             }
+            onDeleteAppearance={onDeleteAppearance}
             onUpdateBox={onUpdateBox}
           />
         </Grid>
@@ -80,28 +76,15 @@ const Frame = ({
             }
           />
         </Grid>
-        {/* <Grid container item xs={12} spacing={1}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={editMode}
-                onChange={() => setEditMode(!editMode)}
-              />
-            }
-            label="Edit Mode"
-          />
-        </Grid> */}
         <Grid container item xs={12} spacing={0}>
-          {activeAppearance ? (
+          {(activeAppearance !== undefined) &
+          (activeAppearance in appearances.byKey) ? (
             <>
               <Typography>Labels</Typography>
               <Appearance
                 appearance={appearances.byKey[activeAppearance]}
                 labels={labels}
                 onDeleteAppearanceLabel={onDeleteAppearanceLabel}
-                // activeId={activeAnnotation}
-                // onDelete={onDeleteAppearance}
-                // onActive={onActive}
               />
             </>
           ) : null}
@@ -116,7 +99,8 @@ export default connect(
     collection: state.collections.byKey[state.ui.activeCollection],
     frame: state.frame,
     labels: state.labels,
-    appearances: state.appearances
+    appearances: state.appearances,
+    activeAppearance: state.ui.activeAppearance
   }),
   (dispatch, ownProps) => ({
     onChangeFrame: (collectionId, frameId, shift) =>
@@ -128,6 +112,8 @@ export default connect(
     onAddAppearanceLabel: (appearanceId, labelId) =>
       dispatch(a.addAppearanceLabel({ appearanceId, labelId })),
     onDeleteAppearanceLabel: appearanceLabelId =>
-      dispatch(a.deleteAppearanceLabel(appearanceLabelId))
+      dispatch(a.deleteAppearanceLabel(appearanceLabelId)),
+    setActiveAppearance: appearanceId =>
+      dispatch(a.setActiveAppearance(appearanceId))
   })
 )(Frame);

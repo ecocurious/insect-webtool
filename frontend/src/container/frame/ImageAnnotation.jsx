@@ -1,20 +1,28 @@
 import React from "react";
 import { Rnd } from "react-rnd";
+import { makeStyles } from "@material-ui/core/styles";
 
-const style = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  border: "solid 1px #ddd",
-  background: "#f0f0f0"
-};
+import CloseIcon from "@material-ui/icons/Close";
+
+const useStyles = makeStyles(theme => ({
+  box: {
+    border: "solid 1px black",
+    backgroundColor: "rgba(0, 0, 0, 0.1)"
+    // background: "#f0f0f0"
+  },
+  delete: {
+    top: 0,
+    right: 0,
+    position: "absolute"
+  }
+}));
 
 const annotationToAppearance = ({ x, y, width, height }, imageSize) => {
   return {
-    bboxXmin: x / imageSize.width,
-    bboxXmax: (x + width) / imageSize.width,
-    bboxYmin: y / imageSize.height,
-    bboxYmax: (y + height) / imageSize.height
+    bboxXmin: x / imageSize.width + 0.5,
+    bboxXmax: (x + width) / imageSize.width + 0.5,
+    bboxYmin: y / imageSize.height + 0.5,
+    bboxYmax: (y + height) / imageSize.height + 0.5
   };
 };
 
@@ -22,8 +30,8 @@ const appearanceToAnnotation = (
   { bboxXmin, bboxXmax, bboxYmin, bboxYmax },
   imageSize
 ) => ({
-  x: bboxXmin * imageSize.width,
-  y: bboxYmin * imageSize.height,
+  x: (bboxXmin - 0.5) * imageSize.width,
+  y: (bboxYmin - 0.5) * imageSize.height,
   width: (bboxXmax - bboxXmin) * imageSize.width,
   height: (bboxYmax - bboxYmin) * imageSize.height
 });
@@ -33,17 +41,19 @@ const ImageAnnotation = ({
   imageSize,
   onBoxUpdate,
   onClick,
-  active
+  active,
+  onRemove,
+  editable
 }) => {
   if (!imageSize) {
     return null;
   }
 
+  const classes = useStyles();
+
   const [tempPos, setTempPos] = React.useState({
-    width: 200,
-    height: 200,
-    x: 10,
-    y: 10
+    x: 0,
+    y: 0
   });
 
   const { bboxXmin, bboxXmax, bboxYmin, bboxYmax } = appearance;
@@ -53,23 +63,26 @@ const ImageAnnotation = ({
   }, [bboxXmin, bboxXmax, bboxYmin, bboxYmax, imageSize]);
 
   const updateBox = ({ x, y, height, width }) => {
-    onBoxUpdate(
-      annotationToAppearance(
-        {
-          x,
-          y,
-          height: parseInt(height, 10),
-          width: parseInt(width, 10)
-        },
-        imageSize
-      )
-    );
+    if (height & width) {
+      onBoxUpdate(
+        annotationToAppearance(
+          {
+            x,
+            y,
+            height: parseInt(height, 10),
+            width: parseInt(width, 10)
+          },
+          imageSize
+        )
+      );
+    }
     setTempPos({ x, y, height, width });
   };
 
-  return (
+  return editable ? (
     <Rnd
-      style={{ ...style, background: active ? "red" : "grey" }}
+      style={active ? { background: "rgba(255, 0, 0, 0.2)" } : {}}
+      className={classes.box}
       size={{ width: tempPos.width, height: tempPos.height }}
       position={{ x: tempPos.x, y: tempPos.y }}
       onClick={onClick}
@@ -84,8 +97,19 @@ const ImageAnnotation = ({
         });
       }}
     >
-      Rnd
+      <CloseIcon onClick={onRemove} size="small" className={classes.delete} />
     </Rnd>
+  ) : (
+    <div
+      style={{
+        width: tempPos.width,
+        height: tempPos.height,
+        left: tempPos.x,
+        top: tempPos.y,
+        position: "absolute"
+      }}
+      className={classes.box}
+    ></div>
   );
 };
 

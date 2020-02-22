@@ -130,11 +130,11 @@ def delete_appearance(*, appearance_id, **_):
     with db.session_scope() as session:
         app = session.query(models.Appearance).get(appearance_id)
         frame = app.frame
-        frame_id = frame.id
         session.delete(app)
         session.commit()
         app_dicts = [to_dict(a, rels=['appearance_labels']) for a in frame.appearances]
-    emit_one('APPEARANCES_FLUSH', {'appearances': app_dicts, 'frameId': frame_id})
+        frame_dict = to_dict(frame)
+    emit_one('APPEARANCES_FLUSH', {'frame': frame_dict, 'appearances': app_dicts})
 
 
 def add_appearance(*, frame_id, appearance, label_ids, creator_id, **_):
@@ -169,7 +169,6 @@ def add_collection(*, name, **_):
         session.commit()
         coll = to_dict(coll)
     emit_one('COLLECTION_ADDED', {'collection': coll})
-
 
 
 def delete_collection(*, collection_id, **_):

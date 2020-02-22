@@ -30,24 +30,23 @@ const useStyles = makeStyles({
     zIndex: 1
   },
   annotations: {
-    position: "absolute",
-    zIndex: 3,
+    // display: "flex",
+    position: "relative",
     gridColumn: "1 / 1",
     gridRow: "1 / 1"
   },
   selectorContainer: {
-    position: "absolute",
     zIndex: 2,
+    position: "absolute",
     gridColumn: "1 / 1",
     gridRow: "1 / 1"
   },
   selector: {
-    position: "absolute",
-    zIndex: 4,
-    border: "dashed 2px black",
+    position: "relative",
+    border: "dashed 1px black",
     boxSizing: "border-box",
-    transition: "box-shadow 0.21s ease-in-out",
-    background: "red"
+    transition: "box-shadow 0.21s ease-in-out"
+    // background: "red"
   }
 });
 
@@ -60,10 +59,12 @@ const ImageCard = ({
   collection,
   frame,
   onChangeFrame,
-  onUpdateBox
+  onUpdateBox,
+  onDeleteAppearance
 }) => {
   const classes = useStyles();
   const [imageSize, setImageSize] = React.useState(null);
+  const [addMode, setAddMode] = React.useState(false);
 
   return (
     <Card className={classes.card}>
@@ -86,21 +87,29 @@ const ImageCard = ({
         <div className={classes.outer}>
           {imageSize ? (
             <Selector
+              style={{ zIndex: addMode ? 5 : 3 }}
               classes={classes}
               imageSize={imageSize}
               onSelect={onAddAppearance}
+              drag={addMode}
+              setDrag={setAddMode}
             />
           ) : null}
           <Image url={frame.url} classes={classes} setSize={setImageSize} />
-          <div className={classes.annotations}>
+          <div
+            className={classes.annotations}
+            style={{ zIndex: addMode ? 2 : 2 }}
+          >
             {appearances.allIds.map((id, idx) => (
               <ImageAnnotation
                 key={"annotation-" + idx}
                 appearance={appearances.byKey[id]}
                 imageSize={imageSize}
+                editable={!addMode}
                 active={id == activeAppearance}
                 onBoxUpdate={box => onUpdateBox(id, box)}
                 onClick={() => setActiveAppearance(id)}
+                onRemove={() => onDeleteAppearance(id)}
               />
             ))}
           </div>

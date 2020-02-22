@@ -102,7 +102,6 @@ const AppearanceLabel = ({ appearanceLabel, labels, classes, onDelete }) => {
 
 const Appearance = ({ appearance, labels, onDeleteAppearanceLabel }) => {
   const classes = useStyles();
-  console.log(appearance);
   return (
     <List className={classes.root}>
       {appearance.appearanceLabels.map((appearanceLabel, idx) => (

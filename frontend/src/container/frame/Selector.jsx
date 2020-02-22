@@ -23,10 +23,8 @@ const annotationToAppearance = ({ x, y, width, height }, imageSize) => {
   };
 };
 
-const Selector = ({ classes, imageSize, onSelect }) => {
+const Selector = ({ classes, imageSize, onSelect, drag, setDrag }) => {
   const [selection, setSelection] = React.useState({});
-
-  const [drag, setDrag] = React.useState(false);
 
   const mouseDown = e => {
     setDrag(true);
@@ -39,7 +37,10 @@ const Selector = ({ classes, imageSize, onSelect }) => {
   const mouseUp = () => {
     setDrag(false);
     setSelection({});
-    onSelect(annotationToAppearance(toBox(selection), imageSize));
+    const box = toBox(selection);
+    if (box.height > 0.01) {
+      onSelect(annotationToAppearance(box, imageSize));
+    }
   };
 
   const mouseMove = e => {
@@ -54,7 +55,11 @@ const Selector = ({ classes, imageSize, onSelect }) => {
 
   return (
     <div
-      style={{ width: imageSize.width, height: imageSize.height }}
+      style={{
+        width: imageSize.width,
+        height: imageSize.height,
+        zIndex: drag ? 3 : 2
+      }}
       className={classes.selectorContainer}
       onMouseDown={mouseDown}
       onMouseMove={mouseMove}

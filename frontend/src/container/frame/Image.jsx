@@ -9,7 +9,6 @@ const Image = ({ url, classes, setSize }) => {
       src={url}
       onLoad={() => {
         const rect = img.current.getBoundingClientRect();
-        console.log("rect", rect);
         setSize({
           height: img.current.height,
           width: img.current.width,

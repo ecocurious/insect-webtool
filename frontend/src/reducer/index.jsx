@@ -2,18 +2,28 @@ import { combineReducers } from "redux";
 import { createReducer, findNonSerializableValue } from "redux-starter-kit";
 import _ from "lodash";
 
-const view = createReducer("BROWSER", {
+const view = createReducer("FRAME", {
   VIEW_UPDATE: (state, action) => action.view
 });
 
 const ui = createReducer(
-  { activeCollection: null },
+  { activeCollection: null, activeAppearance: null },
   {
     SERVER_INIT: (state, action) => ({
+      ...state,
       activeCollection: action.collections[0].id
     }),
     SEARCH_UPDATED: (state, action) => ({
+      ...state,
       activeCollection: action.search.collectionId
+    }),
+    AKTIVE_APPEARANCE_SET: (state, action) => ({
+      ...state,
+      activeAppearance: action.appearanceId
+    }),
+    APPEARANCE_ADDED: (state, action) => ({
+      ...state,
+      activeAppearance: action.appearance.id
     })
   }
 );
@@ -37,14 +47,14 @@ const remove = ({ byKey, allIds }, id) => ({
   allIds: _.without(allIds, id)
 });
 
-const append = ({ byKey, allIds }, newObj) => ({
+const upsert = ({ byKey, allIds }, newObj) => ({
   byKey: { ...byKey, [newObj.id]: newObj },
   allIds: allIds.includes(newObj.id) ? allIds : [...allIds, newObj.id]
 });
 
 const collections = createReducer(key([]), {
   SERVER_INIT: (state, action) => key(action.collections),
-  COLLECTION_ADDED: (state, action) => append(state, action.collection),
+  COLLECTION_ADDED: (state, action) => upsert(state, action.collection),
   COLLECTION_DELETED: (state, action) => remove(state, action.collectionId)
 });
 
@@ -68,15 +78,15 @@ const appearances = createReducer(
   {
     APPEARANCE_ADDED: (state, action) => ({
       ...state,
-      ...append(state, action.appearance)
+      ...upsert(state, action.appearance)
     }),
     APPEARANCE_LABEL_DELETED: (state, action) => ({
       ...state,
-      ...append(state, action.appearance)
+      ...upsert(state, action.appearance)
     }),
     APPEARANCE_LABEL_ADDED: (state, action) => ({
       ...state,
-      ...append(state, action.appearance)
+      ...upsert(state, action.appearance)
     }),
     APPEARANCES_FLUSH: (state, action) => ({
       frameId: action.frame.id,
@@ -110,8 +120,14 @@ const search = createReducer(defaultSearch, {
 const searchResults = createReducer(
   { frames: [], ntotal: 0, selectedFrames: {} },
   {
-    SEARCH_UPDATED: (state, action) => ({...(action.searchResults), ...{selectedFrames: {}}}),
-    SELECTED_FRAMES_UPDATE: (state, action) => ({...state, ...{selectedFrames: action.selectedFrames}})
+    SEARCH_UPDATED: (state, action) => ({
+      ...action.searchResults,
+      ...{ selectedFrames: {} }
+    }),
+    SELECTED_FRAMES_UPDATE: (state, action) => ({
+      ...state,
+      ...{ selectedFrames: action.selectedFrames }
+    })
   }
 );
 
