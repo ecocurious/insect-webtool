@@ -136,15 +136,18 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
       <Grid item xs>
         <DateRange
           startDate={search.startDate}
-          setStartDate={startDate => onSearchUpdate({ ...search, startDate })}
           endDate={search.endDate}
-          setEndDate={endDate => onSearchUpdate({ ...search, endDate })}
+          // setStartDate={startDate => onSearchUpdate({ ...search, startDate })}
+          // setEndDate={endDate => onSearchUpdate({ ...search, endDate })}
+          search={search}
+          onSearchUpdate={onSearchUpdate}
+
           frames={frames}
           onZoomToFrames={() => {
               if (frames && _.size(frames) >= 2) {
                   const startDate = new Date(frames[0].timestamp);
                   const endDate = new Date(frames[frames.length - 1].timestamp);
-                  onSearchUpdate({startDate, endDate});
+                  onSearchUpdate({...search, ...{startDate, endDate}});
               }
           }}
         />

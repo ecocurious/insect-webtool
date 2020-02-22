@@ -168,8 +168,23 @@ class DateRange extends React.Component {
   }
 
   onChange([ms1, ms2]) {
-    this.props.setStartDate(new Date(ms1));
-    this.props.setEndDate(new Date(ms2));
+    // this.props.setStartDate(new Date(ms1));
+    // this.props.setEndDate(new Date(ms2));
+
+    const startDate = new Date(ms1);
+    const endDate = new Date(ms2);
+
+    const search = this.props.search;
+
+    const delta = (x, y) => Math.abs(x-y);
+
+    if (delta(+this.props.startDate, +startDate) > 2000 || delta(+this.props.endDate, +endDate) > 2000) {
+        this.props.onSearchUpdate({...search, ...{startDate, endDate}});
+    }
+
+    // if (this.props.endDate != endDate) {
+    //     // console.log('this.props.endDate != endDate', this.props.endDate, endDate);
+    // }
   }
 
   zoomToFrames() {
@@ -183,6 +198,16 @@ class DateRange extends React.Component {
   }
 
   zoomOut() {
+      const t1 = this.state.rangeStartHint;
+      const t2 = this.state.rangeStopHint;
+      const d = (+t2) - (+t1);
+      const r = 0.3;
+      const t1p = (+t1) - r*d;
+      const t2p = (+t2) + r*d;
+      this.setState({
+        rangeStartHint: new Date(t1p),
+        rangeStopHint: new Date(t2p)
+      });
   }
 
   render() {

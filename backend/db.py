@@ -250,6 +250,8 @@ def fetch_frame_ids(session, frames_query, mode, n_frames=None, after_id=None):
     elif mode == 'cont':
         ids_ = fetch_frame_ids_continuous(session, frames_query=frames_query, after_id=after_id, n_frames=n_frames)
         count = len(ids_)
+    else:
+        return 0, []
     return count, ids_
 
 

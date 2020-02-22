@@ -97,6 +97,11 @@ class Better_JSON_ENCODER(json.JSONEncoder):
             return float(obj)
         elif isinstance(obj, np.ndarray):
             return obj.tolist()
+        elif isinstance(obj, (datetime.datetime)):
+            if obj.tzinfo is None:
+                return obj.isoformat() + 'Z'
+            else:
+                return obj.isoformat()
         elif isinstance(obj, (datetime.datetime, datetime.date)):
             # print('datetime', obj)
             return obj.isoformat()

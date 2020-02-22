@@ -259,6 +259,7 @@ def handle_actions(action):
     if action['type'] == "APPEARANCE_LABEL_ADD":
         add_appearance_label(**s_action)
 
+
 def download_collection(collection_id=28, appearance_needed=True):
     with db.session_scope() as session:
         xs = []
