@@ -41,6 +41,14 @@ const Browser = ({
     onSearchUpdate(search);
   }, []);
 
+  const setLeftRight = ({timestamp, side}) => {
+      if (side == "left") {
+          onSearchUpdate({...search, ...{activeId: null}, ...{startDate: timestamp}});
+      } else {
+          onSearchUpdate({...search, ...{activeId: null}, ...{endDate: timestamp}});
+      }
+  };
+
   return (
     <Grid container justify="space-between" spacing={1} alignItems="flex-start">
       <Grid container item direction="column" xs={9} spacing={2}>
@@ -83,6 +91,7 @@ const Browser = ({
               showSelect={true}
               onClickFrame={frameId => onClickFrame(activeCollection, frameId)}
               selectedFrames={selectedFrames}
+              setLeftRight={setLeftRight}
               onSelectedFramesUpdate={onSelectedFramesUpdate}
             />
         </Grid>

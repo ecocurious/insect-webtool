@@ -33,6 +33,7 @@ const FrameTile = ({
   selected,
   onClickFrame,
   selectedFrames,
+  setLeftRight,
   onSelectedFramesUpdate
 }) => {
   const classes = useStyles();
@@ -59,8 +60,8 @@ const FrameTile = ({
             open={Boolean(anchorEl)}
             onClose={handleClose}
           >
-            <MenuItem onClick={handleClose}>Set Leftmost</MenuItem>
-            <MenuItem onClick={handleClose}>Set Rightmost</MenuItem>
+           <MenuItem onClick={() => {setLeftRight({timestamp: new Date(timestamp), side: "left"}); handleClose()}}>Set Leftmost</MenuItem>
+           <MenuItem onClick={() => {setLeftRight({timestamp: new Date(timestamp), side: "right"}); handleClose()}}>Set Rightmost</MenuItem>
        </Menu>
 
       <GridListTileBar
@@ -96,7 +97,7 @@ const FrameTile = ({
 };
 
 
-const FrameGrid = ({ frames, showSelect, onClickFrame, selectedFrames, onSelectedFramesUpdate }) => {
+const FrameGrid = ({ frames, showSelect, onClickFrame, selectedFrames, onSelectedFramesUpdate, setLeftRight }) => {
   const classes = useStyles();
   return (
     <GridList cellHeight={180} className={classes.gridList} cols={5}>
@@ -106,6 +107,7 @@ const FrameGrid = ({ frames, showSelect, onClickFrame, selectedFrames, onSelecte
           onClickFrame={onClickFrame}
           selectedFrames={selectedFrames}
           onSelectedFramesUpdate={onSelectedFramesUpdate}
+          setLeftRight={setLeftRight}
           selected={_.has(selectedFrames, frame.id)}
           {...frame}
           //   selected={showSelect ? frames.selectedIds.includes(frame.id) : false}
