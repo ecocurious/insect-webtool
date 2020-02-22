@@ -5,19 +5,13 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
-import BugReportOutlinedIcon from "@material-ui/icons/BugReportOutlined";
-import Typography from "@material-ui/core/Typography";
 
 import Collapse from "@material-ui/core/Collapse";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import StarBorder from "@material-ui/icons/StarBorder";
-import ThumbUpIcon from "@material-ui/icons/ThumbUp";
-import ThumbDownIcon from "@material-ui/icons/ThumbDown";
-import DeleteIcon from "@material-ui/icons/Delete";
-import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
+import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
+import Link from "@material-ui/core/Link";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,7 +42,7 @@ const Collection = ({
   onChangeActive,
   onDeleteCollection
 }) => {
-  //   const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
 
   return (
     <>
@@ -58,38 +52,31 @@ const Collection = ({
         selected={active}
         onClick={() => onChangeActive(collection.id)}
       >
-        {onDeleteCollection ? (
-          <ListItemIcon>
-            <IconButton onClick={() => onDeleteCollection(collection.id)}>
-              <CloseIcon />
-            </IconButton>
-          </ListItemIcon>
-        ) : null}
         <CollectionText collection={collection} classes={classes} />
-        {/* {open ? (
-          <ExpandLess onClick={() => setOpen(false)} />
-        ) : (
-          <ExpandMore onClick={() => setOpen(true)} />
-        )} */}
+        {collection.downloadUrl ? (
+          open ? (
+            <ExpandLess onClick={() => setOpen(false)} />
+          ) : (
+            <ExpandMore onClick={() => setOpen(true)} />
+          )
+        ) : null}
       </ListItem>
-      {/* <Collapse in={open} timeout="auto" unmountOnExit>
+      <Collapse in={open} timeout="auto" unmountOnExit>
         <List component="div" disablePadding>
-          {collectionLabels.map((al, idx) => (
-            <ListItem className={classes.nested} key={"sub-app-" + idx}>
-              <CollectionLabelText
-                label={labels.byKey[al.labelId]}
-                classes={classes}
-              />
-              <ListItemIcon className={classes.voter}>
-                <ThumbUpIcon />
-              </ListItemIcon>
-              <ListItemIcon className={classes.voter}>
-                <ThumbDownIcon />
-              </ListItemIcon>
-            </ListItem>
-          ))}
+          <ListItem className={classes.nested}>
+            <ListItemText
+              secondary={
+                <Link href={collection.downloadUrl}>Download Dataset</Link>
+              }
+            />
+            <ListItemIcon className={classes.voter}>
+              <IconButton onClick={() => onDeleteCollection(collection.id)}>
+                <DeleteForeverIcon />
+              </IconButton>
+            </ListItemIcon>
+          </ListItem>
         </List>
-      </Collapse> */}
+      </Collapse>
     </>
   );
 };
@@ -106,7 +93,6 @@ const CollectionList = ({
   onDeleteCollection
 }) => {
   const classes = useStyles();
-  console.log(activeCollection);
   return (
     <List className={classes.root}>
       <Collection
@@ -116,21 +102,19 @@ const CollectionList = ({
         onChangeActive={onChangeActive}
         classes={classes}
       />
-      {intersperse(
-        collections.allIds.map(id => collections.byKey[id]),
-        i => null,
-        //   <Divider key={"divider-" + i} variant="inset" component="li" />
-        (a, i) => (
-          <Collection
-            key={"collection-" + i}
-            active={activeCollection == a.id}
-            collection={a}
-            onChangeActive={onChangeActive}
-            classes={classes}
-            onDeleteCollection={onDeleteCollection}
-          />
-        )
-      )}
+      {collections.allIds.map(id => (
+        <Collection
+          key={"collection-" + id}
+          active={activeCollection == id}
+          collection={{
+            ...collections.byKey[id],
+            downloadUrl: "https://www.google.com"
+          }}
+          onChangeActive={onChangeActive}
+          classes={classes}
+          onDeleteCollection={onDeleteCollection}
+        />
+      ))}
     </List>
   );
 };

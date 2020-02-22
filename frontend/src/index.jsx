@@ -23,6 +23,7 @@ import Tab from "@material-ui/core/Tab";
 import Browser from "./container/browser/Browser";
 import Frame from "./container/frame/Frame";
 import LiveView from "./container/LiveView";
+import CreatorSelect from "./container/CreatorSelect";
 // import Dataset from "./container/Dataset";
 
 const drawerWidth = 240;
@@ -57,6 +58,11 @@ const useStyles = makeStyles(theme => ({
   },
   tabsPlaceholder: {
     minHeight: "48px"
+  },
+  creator: {
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    width: "100%"
   }
 }));
 
@@ -67,7 +73,7 @@ const views = [
   { screenName: "Annotation", id: "FRAME" }
 ];
 
-const Index = ({ view, updateView }) => {
+const Index = ({ view, updateView, creators, onSelectCreator }) => {
   const classes = useStyles();
 
   return (
@@ -78,6 +84,12 @@ const Index = ({ view, updateView }) => {
           <Typography variant="h6" noWrap>
             Insect Counter
           </Typography>
+          {/* <div className={classes.creator}> */}
+          <CreatorSelect
+            creators={creators}
+            onSelectCreator={onSelectCreator}
+          />
+          {/* </div> */}
         </Toolbar>
         <Tabs
           className={classes.tabs}
@@ -111,7 +123,7 @@ const epicMiddleware = createEpicMiddleware();
 let socket = io(process.env.APP_HOST);
 let socketIoMiddleware = createSocketIoMiddleware(
   socket,
-  (type, action) => action.server
+  (type, action) => action.serverReady
 );
 
 const middlewares = [epicMiddleware, socketIoMiddleware, logger];
@@ -125,10 +137,11 @@ const store = createStore(reducers, initalState, enhancer);
 epicMiddleware.run(epics);
 
 const IndexContainer = connect(
-  (state, ownProps) => ({ view: state.view }),
+  (state, ownProps) => ({ view: state.view, creators: state.creators }),
   (dispatch, ownProps) => ({
     // onMount: () => dispatch(a.initApp()),
-    updateView: view => dispatch(a.updateView(view))
+    updateView: view => dispatch(a.updateView(view)),
+    onSelectCreator: id => dispatch(a.selectCreator(id))
   })
 )(Index);
 

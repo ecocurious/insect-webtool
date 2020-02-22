@@ -22,7 +22,8 @@ const Browser = ({
   activeCollection,
   onDeleteCollection,
   onAddCollection,
-  onAddToCollection
+  onAddToCollection,
+  onClickFrame
 }) => {
   // There is probably a better way for this
   React.useEffect(() => {
@@ -36,7 +37,11 @@ const Browser = ({
           <BrowserNav search={search} onSearchUpdate={onSearchUpdate} />
           {ntotal ? <div>Total: {ntotal}</div> : <div></div>}
         </Grid>
-        <FrameGrid frames={frames} showSelect={true} />
+        <FrameGrid
+          frames={frames}
+          showSelect={true}
+          onClickFrame={frameId => onClickFrame(activeCollection, frameId)}
+        />
       </Grid>
       <Grid container item xs={3} spacing={2}>
         <Grid container item xs={12} spacing={0}>
@@ -78,7 +83,11 @@ export default withStyles(styles)(
       onSearchUpdate: search => dispatch(a.updateSearch(search)),
       onDeleteCollection: id => dispatch(a.deleteCollection(id)),
       onAddCollection: collection => dispatch(a.addCollection(collection)),
-      onAddToCollection: data => dispatch(a.addToCollection(data))
+      onAddToCollection: data => dispatch(a.addToCollection(data)),
+      onClickFrame: (collectionId, frameId) => {
+        dispatch(a.changeFrame(collectionId, frameId, 0));
+        dispatch(a.updateView("FRAME"));
+      }
     })
   )(Browser)
 );
