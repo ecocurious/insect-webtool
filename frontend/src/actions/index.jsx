@@ -142,3 +142,11 @@ export const collectionRemoveFrames = ({collectionId, frameIds}) => {
       server: true
   };
 }
+
+export const setActiveCollection = ({collectionId}) => {
+  return {
+      type: "ACTIVE_COLLECTION_SET",
+      collectionId,
+      server: true
+  };
+}

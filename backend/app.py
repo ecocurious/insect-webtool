@@ -247,6 +247,31 @@ def collection_remove_frames(*, collection_id, frame_ids, **_):
         emit_one('COLLECTION_FRAMES_UPDATED', {'collectionId': collection_id, 'countDelta': -n})
 
 
+def set_active_collection(*, collection_id, **_):
+    with db.session_scope() as session:
+        start_date, end_date = db.collection_get_bounds(session, collection_id=collection_id)
+        if start_date is not None and end_date is not None:
+            end_date = end_date + datetime.timedelta(seconds=1)
+            frames_query = models.FramesQuery(
+                tbegin=start_date, tend=end_date,
+                collection_id=collection_id)
+            n_frames = 20
+            mode = 'subsample'
+
+            ntotal, frames = db.get_frames(session, frames_query, mode, n_frames, after_id=None)
+            frames = [to_dict(frame) for frame in frames]
+            search_results = {'ntotal': ntotal, 'frames': frames}
+
+            search = {'startDate': start_date,
+                      'endDate': end_date,
+                      'mode': mode,
+                      'nFrames': n_frames,
+                      'afterId': None,
+                      'collectionId': collection_id}
+
+            emit_one('SEARCH_UPDATED', {'searchResults': search_results, 'search': search})
+
+
 @socketio.on('action')
 def handle_actions(action):
     s_action = snakeize_dict_keys(action)
@@ -282,6 +307,11 @@ def handle_actions(action):
         add_appearance_label(**s_action)
     if action['type'] == 'LIVEIMAGE_PUSH':
         emit('action', {"type": 'LIVEIMAGE_NEW', "liveImage": action['liveImage']}, broadcast=True)
+
+    if action['type'] == 'ACTIVE_COLLECTION_SET':
+        set_active_collection(**s_action)
+
+
 
 
 def download_collection(collection_id=28, appearance_needed=True):

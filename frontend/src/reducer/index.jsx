@@ -114,7 +114,21 @@ const defaultSearch = {
 };
 
 const search = createReducer(defaultSearch, {
-    SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search })
+    SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search }),
+
+    /* TODO: change startDate, endDate to integers. (this is so hacky) */
+    SEARCH_UPDATED: (state, action) =>{
+        const s = action.search;
+        const startDate = new Date(s.startDate);
+        const endDate = new Date(s.endDate);
+
+        return ({ ...state, ...{...s, ...{startDate, endDate}}})
+    },
+
+    ACTIVE_COLLECTION_SET: (search, action) => (
+        {...search, ...{collectionId: action.collectionId}}
+    )
+
 });
 
 const searchResults = createReducer(

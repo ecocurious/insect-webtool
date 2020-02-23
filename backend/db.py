@@ -181,6 +181,7 @@ def fetch_frame_ids_continuous(session, frames_query, after_id=None, n_frames=No
 
 
 def fetch_frame_ids_subsample(session, frames_query, nframes):
+
     '''
     Args:
         frames_query (FramesQuery):
@@ -211,8 +212,8 @@ def fetch_frame_ids_subsample(session, frames_query, nframes):
         select
             id,
             timestamp,
-            floor(%(n)s * age / (select max(age) from ages))::int as n,
-            lag(floor(%(n)s * age / (select max(age) from ages))::int) over () as n_lag
+            floor(%(n)s * age / (select max(age) + 00000.1 from ages))::int as n,
+            lag(floor(%(n)s * age / (select max(age) + 00000.1 from ages))::int) over () as n_lag
         from
             ages
     )
@@ -227,6 +228,7 @@ def fetch_frame_ids_subsample(session, frames_query, nframes):
     d = frames_query_dict(frames_query)
     d['n'] = nframes
     cursor = get_cursor(session)
+    print(cursor.mogrify(q, d).decode('utf8'))
     cursor.execute(q, d)
 
     rows = cursor.fetchall()

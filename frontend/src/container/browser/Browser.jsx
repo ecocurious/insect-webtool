@@ -35,7 +35,8 @@ const Browser = ({
   selectedFrames,
   onSelectedFramesUpdate,
   onCollectionAddFrames,
-  onCollectionRemoveFrames
+  onCollectionRemoveFrames,
+  onSetActiveCollection
 }) => {
   // There is probably a better way for this
   React.useEffect(() => {
@@ -106,9 +107,10 @@ const Browser = ({
           <CollectionList
             collections={collections}
             activeCollection={activeCollection}
-            onChangeActive={id =>
-              onSearchUpdate({ ...search, collectionId: id })
-            }
+            onChangeActive={id => {
+                /* onSearchUpdate({ ...search, collectionId: id }); */
+                onSetActiveCollection({collectionId: id});
+            }}
             onDeleteCollection={onDeleteCollection}
           />
         </Grid>
@@ -141,8 +143,8 @@ export default withStyles(styles)(
       },
       onSelectedFramesUpdate: selectedFrames => dispatch(a.updateSelectedFrames(selectedFrames)),
       onCollectionAddFrames: data => dispatch(a.collectionAddFrames(data)),
-      onCollectionRemoveFrames: data => dispatch(a.collectionRemoveFrames(data))
-
+      onCollectionRemoveFrames: data => dispatch(a.collectionRemoveFrames(data)),
+      onSetActiveCollection: ({collectionId}) => dispatch(a.setActiveCollection({collectionId}))
     })
   )(Browser)
 );

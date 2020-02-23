@@ -32,7 +32,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const CollectionText = ({ collection, classes }) => (
-  <ListItemText primary={collection.name} secondary={collection.dateCreated} />
+  <ListItemText primary={collection.name} secondary={`${collection.id} (${collection.dateCreated})`} />
 );
 
 const Collection = ({

@@ -82,7 +82,7 @@ const Index = ({ view, updateView, creators, onSelectCreator }) => {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            Insect Counter
+            Insects Research Lab
           </Typography>
           {/* <div className={classes.creator}> */}
           <CreatorSelect
