@@ -27,11 +27,11 @@ in python.withPackages(ps: with ps;
   graphene-sqlalchemy
   flask-graphql
   flask-cors
-  django
-  graphene-django
+  #django
+  #graphene-django
   psycopg2
-  django-cors-headers
-  django-filter
+  #django-cors-headers
+  #django-filter
   sqlalchemy
   numpy
   requests
