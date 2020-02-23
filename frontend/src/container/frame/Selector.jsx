@@ -26,12 +26,15 @@ const annotationToAppearance = ({ x, y, width, height }, imageSize) => {
 const Selector = ({ classes, imageSize, onSelect, drag, setDrag }) => {
   const [selection, setSelection] = React.useState({});
 
+  const container = React.createRef();
+
   const mouseDown = e => {
     setDrag(true);
+    const rect = container.current.getBoundingClientRect();
     setSelection({
       ...selection,
-      startX: e.pageX - imageSize.left,
-      startY: e.pageY - imageSize.top
+      startX: e.pageX - rect.left,
+      startY: e.pageY - rect.top
     });
   };
   const mouseUp = () => {
@@ -45,10 +48,11 @@ const Selector = ({ classes, imageSize, onSelect, drag, setDrag }) => {
 
   const mouseMove = e => {
     if (drag) {
+      const rect = container.current.getBoundingClientRect();
       setSelection({
         ...selection,
-        endX: e.pageX - imageSize.left,
-        endY: e.pageY - imageSize.top
+        endX: e.pageX - rect.left,
+        endY: e.pageY - rect.top
       });
     }
   };
@@ -60,6 +64,7 @@ const Selector = ({ classes, imageSize, onSelect, drag, setDrag }) => {
         height: imageSize.height,
         zIndex: drag ? 3 : 2
       }}
+      ref={container}
       className={classes.selectorContainer}
       onMouseDown={mouseDown}
       onMouseMove={mouseMove}
