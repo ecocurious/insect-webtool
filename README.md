@@ -339,11 +339,8 @@ https://observablehq.com/@d3/scale-ticks
 $ ssh eco1
 $ tmux attach
 
-build frontend:
 $ ./deploy-frontend.sh
-
-run backend:
-$ nix-shell --command "./start_backend.py"
+$ ./start-backend.sh
 
 app runs at
 http://195.201.97.57/
