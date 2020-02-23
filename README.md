@@ -333,3 +333,18 @@ https://observablehq.com/@d3/scale-ticks
 - select onClick
 - no list of all appearances, just all labels of current appearance
 - change multiselect into more slim verison / remove
+
+# How to deploy app
+
+$ ssh eco1
+$ tmux attach
+
+build frontend:
+$ cd frontend
+$ yarn install && APP_HOST=http://195.201.97.57:5000 yarn build && cp dist/* /var/www
+
+run backend:
+$ nix-shell --command "./start_backend.py"
+
+app runs at
+http://195.201.97.57/
