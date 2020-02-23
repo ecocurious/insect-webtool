@@ -7,7 +7,6 @@ import FrameGrid from "./FrameGrid";
 import BrowserNav from "./BrowserNav";
 import CollectionList from "./CollectionList";
 import AddCollection from "./AddCollection";
-import AddToCollection from "./AddToCollection";
 import ResultsHeader from "./ResultsHeader";
 
 import Button from '@material-ui/core/Button';
@@ -103,14 +102,6 @@ const Browser = ({
         </Grid>
       </Grid>
       <Grid container item xs={3} spacing={2}>
-        <Grid container item xs={12} spacing={0}>
-          <AddToCollection
-            onAddToCollection={(collectionId, sampleSize) =>
-              onAddToCollection({ collectionId, sampleSize, search })
-            }
-            collections={collections}
-          />
-        </Grid>
         <Grid container item xs={12} spacing={0}>
           <CollectionList
             collections={collections}

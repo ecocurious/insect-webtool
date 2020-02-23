@@ -34,6 +34,7 @@ const useStyles = makeStyles({
 });
 
 const ConfirmRemoveDialog = ({open, onCancelRemove, selectedFrames, activeCollection, collections, confirmRemove}) => {
+    const datasetName = _.get(collections, ['byKey', activeCollection, 'name']);
     return (
         <Dialog
           aria-labelledby="confirm-remove-dialog-title"
@@ -41,11 +42,11 @@ const ConfirmRemoveDialog = ({open, onCancelRemove, selectedFrames, activeCollec
         >
 
           <DialogTitle id="confirm-remove-dialog-title">
-              Remove frames from dataset
+              {`Remove frames from ${datasetName}`}
           </DialogTitle>
 
           <DialogContent>
-              {`Do you want to remove the ${_.size(selectedFrames)} selected Frames from "${_.get(collections, ['byKey', activeCollection, 'name'])}"?`}
+              {`Remove the ${_.size(selectedFrames)} selected Frames from dataset "${datasetName}"?`}
           </DialogContent>
 
           <DialogActions>
