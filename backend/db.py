@@ -338,6 +338,38 @@ def navigate_frame(session, collection_id, frame_id, offset):
     return row[0]
 
 
+def collection_add_frames(session, collection_id, frame_ids):
+    data = [(collection_id, frame_id) for frame_id in frame_ids]
+    cursor = get_cursor(session)
+    q = 'insert into eco.collection_frame (collection_id, frame_id) values %s on conflict do nothing'
+    execute_values(cursor, q, data, page_size=1000)
+    return cursor.rowcount
+
+
+def collection_remove_frames(session, collection_id, frame_ids):
+    data = [(collection_id, frame_id) for frame_id in frame_ids]
+    cursor = get_cursor(session)
+    q = 'delete from eco.collection_frame where (collection_id, frame_id) in (%s)'
+    execute_values(cursor, q, data, page_size=1000)
+    return cursor.rowcount
+
+
+def collection_get_bounds(session, collection_id):
+    cursor = get_cursor(session)
+    q = '''
+    select
+        min(f.timestamp) as timestamp_min,
+        max(f.timestamp) as timestamp_max
+    from eco.collection_frame cf
+    inner join eco.frames f
+        on f.id = cf.frame_id
+    where collection_id = %s
+    '''
+    cursor.execute(q, (collection_id,))
+    r = cursor.fetchone()
+    return r
+
+
 def test():
     with session_scope() as session:
         tbegin = datetime.datetime(2019, 11, 1)
@@ -372,3 +404,11 @@ def test3():
         # ids = fetch_frame_ids(session, frames_query, pagination)
         # print(f'n={len(ids)}: {ids[:10]}')
         return navigate_frame(session=session, collection_id=28, frame_id=78064, offset=-9)
+
+
+def test4():
+    collection_id = 291
+    frame_ids = [95330, 95330]
+    with session_scope() as session:
+        # return collection_add_frames(session, collection_id=collection_id, frame_ids=frame_ids)
+        return collection_get_bounds(session, collection_id=collection_id)

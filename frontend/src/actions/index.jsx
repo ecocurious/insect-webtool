@@ -124,3 +124,21 @@ export const setActiveAppearance = appearanceId => {
     appearanceId
   };
 };
+
+export const collectionAddFrames = ({collectionId, frameIds}) => {
+  return {
+      type: "COLLECTION_ADD_FRAMES",
+      collectionId,
+      frameIds,
+      server: true
+  };
+}
+
+export const collectionRemoveFrames = ({collectionId, frameIds}) => {
+  return {
+      type: "COLLECTION_REMOVE_FRAMES",
+      collectionId,
+      frameIds,
+      server: true
+  };
+}

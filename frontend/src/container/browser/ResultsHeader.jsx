@@ -13,7 +13,7 @@ import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
-
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 
 
 import FormControl from '@material-ui/core/FormControl';
@@ -22,13 +22,77 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 import _ from "lodash";
 
+import AddToCollectionDialog from "./AddToCollectionDialog";
+
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
 
 const useStyles = makeStyles({
   sampleSize: {}
 });
 
+const ConfirmRemoveDialog = ({open, onCancelRemove, selectedFrames, activeCollection, collections, confirmRemove}) => {
+    return (
+        <Dialog
+          aria-labelledby="confirm-remove-dialog-title"
+          open={open}
+        >
 
-const ResultsHeader = ({search, frames, ntotal, onSearchUpdate, selectedFrames, onSelectedFramesUpdate}) => {
+          <DialogTitle id="confirm-remove-dialog-title">
+              Remove frames from dataset
+          </DialogTitle>
+
+          <DialogContent>
+              {`Do you want to remove the ${_.size(selectedFrames)} selected Frames from "${_.get(collections, ['byKey', activeCollection, 'name'])}"?`}
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={() => {onCancelRemove()}} color="primary">
+              Cancel
+            </Button>
+              <Button onClick={() => confirmRemove()} color="primary">
+              Remove frames
+            </Button>
+          </DialogActions>
+
+        </Dialog>
+    )
+}
+
+
+const ResultsHeader = ({
+        search, frames, ntotal, onSearchUpdate,
+        selectedFrames,
+        onSelectedFramesUpdate,
+        onCollectionAddFrames,
+        onCollectionRemoveFrames,
+        activeCollection,
+        collections
+    }) => {
+
+    const [addDialogIsOpen, setDialogIsOpen] = React.useState(false);
+    const [confirmRemoveDialogOpen, setConfirmRemoveDialogOpen] = React.useState(false);
+
+    const handleAdd = ({collectionId}) => {
+        const frameIds = _.keys(selectedFrames);
+        onCollectionAddFrames({collectionId, frameIds})
+        onSelectedFramesUpdate({});
+        onSearchUpdate(search);
+        setDialogIsOpen(false)
+    }
+
+    const handleRemove = () => {
+        const frameIds = _.keys(selectedFrames);
+        if (activeCollection && _.size(frameIds) > 0) {
+            onCollectionRemoveFrames({collectionId: activeCollection, frameIds: frameIds});
+        }
+        onSelectedFramesUpdate({});
+        onSearchUpdate(search);
+        setConfirmRemoveDialogOpen(false);
+    }
+
     return (
         <Grid container justify="flex-start" spacing={2}>
             <Grid item >
@@ -56,14 +120,43 @@ const ResultsHeader = ({search, frames, ntotal, onSearchUpdate, selectedFrames, 
             {_.size(selectedFrames) > 0 ? (
                 <Grid item >
                     <ButtonGroup aria-label="button group">
-                        <Button>
-                            <AddCircleOutlineIcon/>Add To Dataset
+                        <Button onClick={() => {
+                                setDialogIsOpen(true);
+                            }}
+                        >
+                            <AddCircleOutlineIcon />Add To Dataset
                         </Button>
+                        <AddToCollectionDialog
+                          open={addDialogIsOpen}
+                          onClose={() => setDialogIsOpen(false)}
+                          onAdd={handleAdd}
+                          collections={collections}
+                          selectedFrames={selectedFrames}
+                        />
                     </ButtonGroup>
+                    {
+                        activeCollection ?
+                        (
+                            <ButtonGroup aria-label="button group">
+                                <Button onClick={() => setConfirmRemoveDialogOpen(true)}>
+                                    <RemoveCircleOutlineIcon/>Remove from Dataset
+                                </Button>
+                                    <ConfirmRemoveDialog
+                                        open={confirmRemoveDialogOpen}
+                                        selectedFrames={selectedFrames}
+                                        activeCollection={activeCollection}
+                                        collections={collections}
+                                        onCancelRemove={() => setConfirmRemoveDialogOpen(false)}
+                                        confirmRemove={() => handleRemove()}
+                                    >
+                                    </ConfirmRemoveDialog>
+                            </ButtonGroup>
+
+                         ) : null
+                    }
                 </Grid>
             ) : null
             }
-
         </Grid>
     );
 };

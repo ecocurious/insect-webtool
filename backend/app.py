@@ -225,6 +225,7 @@ def update_search(*, search, **_):
     emit_one('SEARCH_UPDATED', {'searchResults': search_results, 'search': search})
 
 
+# TODO: remove
 def addto_collection(*, search, collection_id, sample_size, **_):
     with db.session_scope() as session:
         query = models.FramesQuery(
@@ -234,10 +235,25 @@ def addto_collection(*, search, collection_id, sample_size, **_):
             session, collection_id, query, nframes=sample_size)
 
 
+def collection_add_frames(*, collection_id, frame_ids, **_):
+    with db.session_scope() as session:
+        n = db.collection_add_frames(session, collection_id, frame_ids)
+        emit_one('COLLECTION_FRAMES_UPDATED', {'collectionId': collection_id, 'countDelta': n})
+
+
+def collection_remove_frames(*, collection_id, frame_ids, **_):
+    with db.session_scope() as session:
+        n = db.collection_remove_frames(session, collection_id, frame_ids)
+        emit_one('COLLECTION_FRAMES_UPDATED', {'collectionId': collection_id, 'countDelta': -n})
+
+
 @socketio.on('action')
 def handle_actions(action):
     s_action = snakeize_dict_keys(action)
-    # print(s_action)
+
+    if action['type'] != 'LIVEIMAGE_PUSH':
+        print(s_action)
+
     if action['type'] == "SEARCH_UPDATE":
         update_search(**s_action)
     if action['type'] == "APPEARANCE_ADD":
@@ -248,8 +264,14 @@ def handle_actions(action):
         add_collection(**s_action)
     if action['type'] == "COLLECTION_DELETE":
         delete_collection(**s_action)
+    # TODO: remove
     if action['type'] == "COLLECTION_ADDTO":
         addto_collection(**s_action)
+    if action['type'] == "COLLECTION_ADD_FRAMES":
+        collection_add_frames(**s_action)
+    if action['type'] == "COLLECTION_REMOVE_FRAMES":
+        collection_remove_frames(**s_action)
+
     if action['type'] == "FRAME_CHANGE":
         change_frame(**s_action)
     if action['type'] == "BOX_UPDATE":
