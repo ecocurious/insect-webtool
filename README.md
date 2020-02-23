@@ -340,8 +340,7 @@ $ ssh eco1
 $ tmux attach
 
 build frontend:
-$ cd frontend
-$ yarn install && APP_HOST=http://195.201.97.57:5000 yarn build && cp dist/* /var/www
+$ ./deploy-frontend.sh
 
 run backend:
 $ nix-shell --command "./start_backend.py"
