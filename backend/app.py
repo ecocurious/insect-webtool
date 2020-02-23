@@ -272,7 +272,8 @@ def set_active_collection(*, collection_id, **_):
 
 @app.route('/dataset/<collection_id>')
 def get_dataset(collection_id):
-    collection = download_collection(collection_id=int(collection_id), appearance_needed=True)
+    appearance_needed = request.args.get('with_appearances_only', 'false') == 'true'
+    collection = download_collection(collection_id=int(collection_id), appearance_needed=appearance_needed)
     return json.dumps({"collection": collection}, cls=Better_JSON_ENCODER)
 
 
