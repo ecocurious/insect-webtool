@@ -73,6 +73,7 @@ def fetch_frames(tbegin, n):
     select "timestamp", url
     from eco.frames
     where "timestamp" > %s
+    order by "timestamp" asc
     limit %s
     '''
     cursor.execute(q, (tbegin, n))
@@ -107,7 +108,7 @@ def get_frame(i, frames, t_last):
 
 
 def main():
-    tbegin = datetime(2019, 11, 16, 12, 0, 0)
+    tbegin = datetime(2020, 1, 15, 15, 0, 0)
     frames = fetch_frames(tbegin, 1000)
     i = 0
 
