@@ -16,6 +16,10 @@ import NavigateNextIcon from '@material-ui/icons/NavigateNext';
 import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
+
 
 import Grid from "@material-ui/core/Grid";
 
@@ -103,6 +107,21 @@ const Browser = ({
         </Grid>
       </Grid>
       <Grid container item xs={3} spacing={2}>
+        <Grid item>
+           <FormGroup row>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={_.isNil(activeCollection)}
+                    onClick={() => onSetActiveCollection({collectionId: null})}
+                    value="checkedB"
+                    color="primary"
+                  />
+                }
+                label="Show all frames"
+              />
+           </FormGroup>
+        </Grid>
         <Grid container item xs={12} spacing={0}>
           <CollectionList
             collections={collections}

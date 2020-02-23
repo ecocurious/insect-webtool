@@ -95,13 +95,6 @@ const CollectionList = ({
   const classes = useStyles();
   return (
     <List className={classes.root}>
-      <Collection
-        key={"collection-all"}
-        active={activeCollection == null}
-        collection={{ name: "All Frames", id: null, dateCreated: null }}
-        onChangeActive={onChangeActive}
-        classes={classes}
-      />
       {collections.allIds.map(id => (
         <Collection
           key={"collection-" + id}

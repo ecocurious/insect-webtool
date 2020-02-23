@@ -24,6 +24,10 @@ const ui = createReducer(
     APPEARANCE_ADDED: (state, action) => ({
       ...state,
       activeAppearance: action.appearance.id
+    }),
+    ACTIVE_COLLECTION_SET: (state, action) => ({
+        ...state,
+        ...{activeCollection: action.collectionId}
     })
   }
 );
