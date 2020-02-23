@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from flask_socketio import SocketIO, send, emit
 import datetime
 import json
@@ -270,6 +270,43 @@ def set_active_collection(*, collection_id, **_):
             emit_one('SEARCH_UPDATED', {'searchResults': search_results, 'search': search})
 
 
+@app.route('/dataset/<collection_id>')
+def get_dataset(collection_id):
+    collection = download_collection(collection_id=int(collection_id), appearance_needed=True)
+    return {"collection": collection}
+
+
+@app.route('/label_appearances/', methods=['POST'])
+def put_label_appearances():
+    req = request.get_json(silent=True)
+    insert_label_appearances(req['label_appearances'], req['creator_id'])
+    return {"success": True}
+
+
+def insert_label_appearances(label_appearances, creator_id):
+    print(label_appearances, creator_id)
+    with db.session_scope() as session:
+        creator = session.query(models.Creator).get(creator_id)
+        for la in label_appearances:
+            frame = session.query(models.Frame).get(la['frame_id'])
+            label = session.query(models.Label).get(la['label_id'])
+
+            app = models.Appearance(
+                frame=frame, creator=creator, bbox_xmax=la['bbox_xmax'],
+                bbox_xmin=la['bbox_xmin'], bbox_ymax=la['bbox_ymax'],
+                bbox_ymin=la['bbox_ymin'])
+            session.add(app)
+            appLabel = models.AppearanceLabel(creator=creator, appearance=app, label=label)
+            session.add(appLabel)
+            session.commit()
+
+
+test_appearances = {
+    "label_appearances": {"frame_id": 123, "label_id": 4, "bbox_xmax": 0.2, "bbox_xmin": 0.1, "bbox_ymin": 0.2, "bbox_ymax": 0.4, "likelihood": 0.8},
+    "creator_id": 12
+}
+
+
 @socketio.on('action')
 def handle_actions(action):
     s_action = snakeize_dict_keys(action)
@@ -312,6 +349,7 @@ def handle_actions(action):
 
 
 
+
 def download_collection(collection_id=28, appearance_needed=True):
     with db.session_scope() as session:
         xs = []
@@ -345,8 +383,6 @@ def test():
         rels = ['appearances']
         return to_dict(obj, rels=rels)
 
-#     return obj
-#     _get_by_id(, , rels=[, 'appearance_labels', 'appearance'])
 
 def test_add():
     collection_id = 32
