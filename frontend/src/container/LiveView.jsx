@@ -8,13 +8,19 @@ const useStyles = makeStyles(theme => ({
   placeholder: ({ size }) => ({ backgroundColor: "grey", ...size })
 }));
 
+
 const LiveImage = ({ size, image }) => {
   const classes = useStyles({ size });
+
+  let utf8decoder = new TextDecoder();
+  const s = utf8decoder.decode(image);
+  // console.log('s', s);
+
   return (
     <div className={classes.root}>
       {image ? (
         <img
-          src={`data:image/jpeg;base64,${image}`}
+          src={`data:image/jpeg;base64,${s}`}
           className={classes.img}
           key={"image"}
         />

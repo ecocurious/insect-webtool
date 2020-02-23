@@ -258,6 +258,8 @@ def handle_actions(action):
         delete_appearance_label(**s_action)
     if action['type'] == "APPEARANCE_LABEL_ADD":
         add_appearance_label(**s_action)
+    if action['type'] == 'LIVEIMAGE_PUSH':
+        emit('action', {"type": 'LIVEIMAGE_NEW', "liveImage": action['liveImage']}, broadcast=True)
 
 
 def download_collection(collection_id=28, appearance_needed=True):

@@ -101,7 +101,7 @@ def get_frame(i, frames, t_last):
         this_frame = frames[i]
         next_frame = frames[i + 1]
         delta_secs = (next_frame[0] - this_frame[0]).total_seconds()
-        wait_secs = clamp(delta_secs, 0.1, 3.0)
+        wait_secs = clamp(delta_secs, 1.0, 3.0)
         sleep_until(t_last + timedelta(seconds=wait_secs))
         return i + 1
 
