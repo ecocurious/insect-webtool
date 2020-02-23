@@ -273,14 +273,14 @@ def set_active_collection(*, collection_id, **_):
 @app.route('/dataset/<collection_id>')
 def get_dataset(collection_id):
     collection = download_collection(collection_id=int(collection_id), appearance_needed=True)
-    return {"collection": collection}
+    return json.dumps({"collection": collection}, cls=Better_JSON_ENCODER)
 
 
 @app.route('/label_appearances/', methods=['POST'])
 def put_label_appearances():
     req = request.get_json(silent=True)
     insert_label_appearances(req['label_appearances'], req['creator_id'])
-    return {"success": True}
+    return json.dumps({"success": True}, cls=Better_JSON_ENCODER)
 
 
 def insert_label_appearances(label_appearances, creator_id):
