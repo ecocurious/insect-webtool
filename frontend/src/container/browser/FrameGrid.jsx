@@ -12,6 +12,9 @@ import CheckBoxIcon from "@material-ui/icons/CheckBox";
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 
+import LabelIcon from '@material-ui/icons/Label';
+
+
 
 const useStyles = makeStyles({
   gridList: {
@@ -34,7 +37,8 @@ const FrameTile = ({
   onClickFrame,
   selectedFrames,
   setLeftRight,
-  onSelectedFramesUpdate
+  onSelectedFramesUpdate,
+  appearances
 }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -67,7 +71,9 @@ const FrameTile = ({
       <GridListTileBar
         titlePosition="top"
         actionPosition="right"
-          title={(<span style={{cursor: "pointer"}} onClick={handleClick}>{id}</span>)}
+          title={(<span style={{cursor: "pointer"}} onClick={handleClick}>
+              <div>{id} {(_.size(appearances) > 0) ? <LabelIcon/> : null}</div>
+        </span>)}
         actionIcon={
           <IconButton
               aria-label={`select`}

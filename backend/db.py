@@ -9,7 +9,10 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contextlib import contextmanager
 from psycopg2.extras import execute_values
+
 from sqlalchemy.ext.hybrid import hybrid_property, hybrid_method
+from sqlalchemy.orm import (joinedload)
+
 import logging
 from collections import namedtuple
 
@@ -259,10 +262,13 @@ def fetch_frame_ids(session, frames_query, mode, n_frames=None, after_id=None):
 def get_frames(session, frames_query, mode, n_frames, after_id):
     count, ids = fetch_frame_ids(session, frames_query=frames_query, mode=mode, n_frames=n_frames, after_id=after_id)
 
-    fobs = session.query(models.Frame).filter(models.Frame.id.in_(ids)).all()
-    d = {fob.id: fob for fob in fobs}
-    frames = [d[id_] for id_ in ids]
+    fobs = session.query(models.Frame).\
+        filter(models.Frame.id.in_(ids)).\
+        options(joinedload('appearances').joinedload('appearance_labels').joinedload('label')).\
+        all()
 
+    d = {fob.id: fob for fob in fobs}
+    frames = [to_dict(d[id_], rels=['appearances', 'appearance_labels', 'label']) for id_ in ids]
     return count, frames
 
 

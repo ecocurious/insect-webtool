@@ -219,7 +219,6 @@ def update_search(*, search, **_):
                                        n_frames=search.get('n_frames', 1),
                                        mode=search.get('mode'),
                                        after_id=search.get('after_id'))
-        frames = [to_dict(frame) for frame in frames]
 
     search_results = {'ntotal': ntotal, 'frames': frames}
     emit_one('SEARCH_UPDATED', {'searchResults': search_results, 'search': search})
@@ -259,7 +258,6 @@ def set_active_collection(*, collection_id, **_):
             mode = 'subsample'
 
             ntotal, frames = db.get_frames(session, frames_query, mode, n_frames, after_id=None)
-            frames = [to_dict(frame) for frame in frames]
             search_results = {'ntotal': ntotal, 'frames': frames}
 
             search = {'startDate': start_date,
