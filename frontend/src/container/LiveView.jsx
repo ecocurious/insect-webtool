@@ -39,7 +39,7 @@ const LiveImage = ({ size, image }) => {
 const LiveImageContainer = connect(
   (state, ownProps) => ({
     image: state.liveImage,
-    size: { height: 480, width: 720 }
+    size: { height: 1.5*480, width: 1.5*720 }
   }),
   (dispatch, ownProps) => ({})
 )(LiveImage);

@@ -103,13 +103,15 @@ def get_frame(i, frames, t_last):
         next_frame = frames[i + 1]
         delta_secs = (next_frame[0] - this_frame[0]).total_seconds()
         wait_secs = clamp(delta_secs, 1.0, 3.0)
+        # wait_secs = clamp(delta_secs, 0.00, 0.2)
         sleep_until(t_last + timedelta(seconds=wait_secs))
         return i + 1
 
 
 def main():
     tbegin = datetime(2020, 1, 15, 15, 0, 0)
-    frames = fetch_frames(tbegin, 1000)
+    # tbegin = datetime(2020, 1, 15, 11, 0, 0)
+    frames = fetch_frames(tbegin, 200)
     i = 0
 
     server_received_image = threading.Condition()
