@@ -228,7 +228,6 @@ def fetch_frame_ids_subsample(session, frames_query, nframes):
     d = frames_query_dict(frames_query)
     d['n'] = nframes
     cursor = get_cursor(session)
-    print(cursor.mogrify(q, d).decode('utf8'))
     cursor.execute(q, d)
 
     rows = cursor.fetchall()
