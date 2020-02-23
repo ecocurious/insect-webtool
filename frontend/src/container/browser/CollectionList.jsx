@@ -13,6 +13,16 @@ import IconButton from "@material-ui/core/IconButton";
 import DeleteForeverIcon from "@material-ui/icons/DeleteForever";
 import Link from "@material-ui/core/Link";
 
+import Button from '@material-ui/core/Button';
+import ButtonGroup from '@material-ui/core/ButtonGroup';
+
+import DialogTitle from "@material-ui/core/DialogTitle";
+import DialogContent from "@material-ui/core/DialogContent";
+import DialogActions from "@material-ui/core/DialogActions";
+import Dialog from "@material-ui/core/Dialog";
+
+import Box from "@material-ui/core/Box";
+
 const useStyles = makeStyles(theme => ({
   root: {
     width: "100%",
@@ -31,6 +41,48 @@ const useStyles = makeStyles(theme => ({
   //   }
 }));
 
+
+const ShowDownloadDialog = ({open, onClose}) => {
+    const downloadUrl = "http://foo.bar/dataset/123.json";
+    return (
+        <Dialog
+          aria-labelledby="show-download-dialog-title"
+          open={open}
+        >
+
+          <DialogTitle id="show-download-dialog-title">
+              How to Download Dataset
+          </DialogTitle>
+
+          <DialogContent>
+                <Box>
+                    This link includes urls to the frame pictures and all the labels of the dataset "dsagdsagjads":
+                </Box>
+                <Box m={2}>
+                    <Link href={downloadUrl}>{downloadUrl}</Link>
+                </Box>
+                <Box>
+                    To use this dataset with the darknet <Link href="https://github.com/AlexeyAB/darknet">Yolo-Implementation</Link> you can
+                    use this python snippet to download in the compatible format:
+                </Box>
+                <Box fontFamily="Monospace" m={2}>
+                    <pre>
+                    import foo;{"\n"}
+                    d = foo.download_dataset("{downloadUrl}", "dataset/")
+                    </pre>
+                </Box>
+          </DialogContent>
+
+          <DialogActions>
+            <Button onClick={() => {onClose()}} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+
+        </Dialog>
+    )
+}
+
 const CollectionText = ({ collection, classes }) => (
   <ListItemText primary={collection.name} secondary={`${collection.id} (${collection.dateCreated})`} />
 );
@@ -43,6 +95,8 @@ const Collection = ({
   onDeleteCollection
 }) => {
   const [open, setOpen] = React.useState(false);
+
+  const [downloadOpen, setDownloadOpen] = React.useState(false);
 
   return (
     <>
@@ -66,7 +120,8 @@ const Collection = ({
           <ListItem className={classes.nested}>
             <ListItemText
               secondary={
-                <Link href={collection.downloadUrl}>Download Dataset</Link>
+                  /*<Link href={collection.downloadUrl}>Download Dataset</Link> */
+                  <Button onClick={() => setDownloadOpen(true)}>Download Dataset</Button>
               }
             />
             <ListItemIcon className={classes.voter}>
@@ -76,6 +131,11 @@ const Collection = ({
             </ListItemIcon>
           </ListItem>
         </List>
+        <ShowDownloadDialog
+            open={downloadOpen}
+            onClose={() => setDownloadOpen(false)}
+            />
+
       </Collapse>
     </>
   );

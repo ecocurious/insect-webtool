@@ -26,6 +26,9 @@ import LiveView from "./container/LiveView";
 import CreatorSelect from "./container/CreatorSelect";
 // import Dataset from "./container/Dataset";
 
+
+import EmojiNatureIcon from '@material-ui/icons/EmojiNature';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -82,7 +85,7 @@ const Index = ({ view, updateView, creators, onSelectCreator }) => {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            Insects Research Lab
+            Insects Monitoring Research Lab <EmojiNatureIcon />
           </Typography>
           {/* <div className={classes.creator}> */}
           <CreatorSelect
