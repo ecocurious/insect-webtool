@@ -13,7 +13,12 @@ const LiveImage = ({ size, image }) => {
   const classes = useStyles({ size });
 
   let utf8decoder = new TextDecoder();
-  const s = utf8decoder.decode(image);
+  var s = "";
+  try {
+  s = utf8decoder.decode(image);
+  } catch(err) {
+      console.log("cought live image decode exception");
+  }
   // console.log('s', s);
 
   return (
