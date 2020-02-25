@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
 
 const ShowDownloadDialog = ({open, onClose, collection}) => {
     console.log('collection', collection);
-    const downloadUrl = process.env.APP_HOST_PUBLIC + "/dataset/" + collection.id ;
+    const downloadUrl = process.env.APP_HOST + "/dataset/" + collection.id ;
     return (
         <Dialog
           aria-labelledby="show-download-dialog-title"
