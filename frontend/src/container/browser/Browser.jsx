@@ -62,8 +62,8 @@ const Browser = ({
           <BrowserNav search={search} onSearchUpdate={onSearchUpdate} frames={frames}/>
         </Grid>
         <Grid item>
-            <b>{search.mode == 'subsample' ?
-                 (frames ? frames.length + " shown (out of " + ntotal + ")" : null) :
+            <b style={{fontSize: "1.3em"}}>{search.mode == 'subsample' ?
+                 (frames ? frames.length + " shown (out of " + Number(ntotal).toLocaleString() + ")" : null) :
                  (frames ? frames.length + " in page" : null) }
             </b>
         </Grid>

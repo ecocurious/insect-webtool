@@ -220,6 +220,13 @@ class DateRange extends React.Component {
       });
   }
 
+  resetView() {
+    const search = this.props.search;
+    const startDate = new Date("2019-11-15T00:00:00");
+    const endDate = new Date("2020-01-31T00:00:00");
+    this.props.onSearchUpdate({...search, ...{startDate, endDate}});
+  }
+
   render() {
     const { rangeStartHint, rangeStopHint } = this.state;
 
@@ -241,6 +248,15 @@ class DateRange extends React.Component {
       <Grid container justify="flex-start" spacing={2}>
         <Grid item>
           <ButtonGroup>
+              <Button
+                variant="outlined"
+                size="small"
+                color="primary"
+                onClick={() => this.resetView()}
+              >
+                Reset
+              </Button>
+
               <Button
                 variant="outlined"
                 size="small"
