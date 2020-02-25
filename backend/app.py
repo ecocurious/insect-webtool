@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, send, emit
 import datetime
 import json
@@ -28,6 +28,7 @@ class BetterJsonWrapper(object):
 
 
 app = Flask(__name__)
+app.json_encoder = Better_JSON_ENCODER
 socketio = SocketIO(json=BetterJsonWrapper)
 socketio.init_app(app, cors_allowed_origins="*")
 
@@ -274,7 +275,7 @@ def set_active_collection(*, collection_id, **_):
 def get_dataset(collection_id):
     appearance_needed = request.args.get('with_appearances_only', 'false') == 'true'
     collection = download_collection(collection_id=int(collection_id), appearance_needed=appearance_needed)
-    return json.dumps({"collection": collection}, cls=Better_JSON_ENCODER)
+    return jsonify({"collection": collection})
 
 
 @app.route('/label_appearances/', methods=['POST'])

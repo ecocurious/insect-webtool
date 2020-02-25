@@ -42,8 +42,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 
-const ShowDownloadDialog = ({open, onClose}) => {
-    const downloadUrl = "http://foo.bar/dataset/123.json";
+const ShowDownloadDialog = ({open, onClose, collection}) => {
+    console.log('collection', collection);
+    const downloadUrl = process.env.APP_HOST_PUBLIC + "/dataset/" + collection.id ;
     return (
         <Dialog
           aria-labelledby="show-download-dialog-title"
@@ -67,8 +68,8 @@ const ShowDownloadDialog = ({open, onClose}) => {
                 </Box>
                 <Box fontFamily="Monospace" m={2}>
                     <pre>
-                    import foo;{"\n"}
-                    d = foo.download_dataset("{downloadUrl}", "dataset/")
+                    import ecolab;{"\n"}
+                    d = ecolab.download_dataset("{downloadUrl}", "dataset/")
                     </pre>
                 </Box>
           </DialogContent>
@@ -133,6 +134,7 @@ const Collection = ({
         </List>
         <ShowDownloadDialog
             open={downloadOpen}
+            collection={collection}
             onClose={() => setDownloadOpen(false)}
             />
 

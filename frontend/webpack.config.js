@@ -20,7 +20,10 @@ const copyConfig = new CopyWebpackPlugin([{
 const cleanPlugin = new CleanWebpackPlugin();
 
 const definePlugin = new webpack.DefinePlugin({
-    "process.env": { APP_HOST: JSON.stringify(process.env.APP_HOST) }
+    "process.env": {
+        APP_HOST: JSON.stringify(process.env.APP_HOST),
+        APP_HOST_PUBLIC: JSON.stringify(process.env.APP_HOST_PUBLIC || "http://app-host-public")
+    }
 });
 
 module.exports = {
