@@ -7,7 +7,11 @@ const view = createReducer("BROWSER", {
 });
 
 const ui = createReducer(
-  { activeCollection: null, activeAppearance: null, resultsView : 'FRAMES' },
+  { activeCollection: null,
+      activeAppearance: null,
+      // resultsView : 'FRAMES'
+      resultsView : 'LABELS_ANALYSIS'
+  },
   {
     SERVER_INIT: (state, action) => ({
       ...state,

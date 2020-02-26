@@ -43,7 +43,8 @@ const Browser = ({
   onCollectionRemoveFrames,
   onSetActiveCollection,
   resultsView,
-  onSetResultsView
+  onSetResultsView,
+  labels
 }) => {
   // There is probably a better way for this
   React.useEffect(() => {
@@ -116,7 +117,7 @@ const Browser = ({
                   setLeftRight={setLeftRight}
                   onSelectedFramesUpdate={onSelectedFramesUpdate}
                 />
-            ) : <LabelAnalysis/>
+            ) : <LabelAnalysis frames={frames} labels={labels}/>
           }
         </Grid>
 
@@ -165,7 +166,8 @@ export default withStyles(styles)(
       collections: state.collections,
       activeCollection: state.ui.activeCollection,
       selectedFrames: state.searchResults.selectedFrames,
-      resultsView: state.ui.resultsView
+      resultsView: state.ui.resultsView,
+      labels: state.labels
     }),
     (dispatch, ownProps) => ({
       onSearchUpdate: search => dispatch(a.updateSearch(search)),
