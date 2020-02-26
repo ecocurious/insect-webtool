@@ -66,10 +66,16 @@ const ShowDownloadDialog = ({open, onClose, collection}) => {
                     To use this dataset with the darknet <Link href="https://github.com/AlexeyAB/darknet">Yolo-Implementation</Link> you can
                     use this python snippet to download in the compatible format:
                 </Box>
+                    {/* import ecolab;{"\n"} */}
+                    {/* d = ecolab.download_dataset("{downloadUrl}", "dataset/") */}
                 <Box fontFamily="Monospace" m={2}>
                     <pre>
-                    import ecolab;{"\n"}
-                    d = ecolab.download_dataset("{downloadUrl}", "dataset/")
+                        # !pip install git+https://github.com/LBrinkmann/insects-client.git{"\n"}
+                        from insectsclient import api{"\n"}
+                        import os{"\n"}
+                        os.environ['INSECTS_PLATFORM_URL'] = '{process.env.APP_HOST}'{"\n"}
+                        _, frame_paths = api.import_collection({collection.id}, '/content/data', with_appearances_only=False){"\n"}
+                        data = api.create_file_list(frame_paths, '/content/data/coll({collection.id}.txt'){"\n"}
                     </pre>
                 </Box>
           </DialogContent>

@@ -85,7 +85,7 @@ const Index = ({ view, updateView, creators, onSelectCreator }) => {
       <AppBar position="fixed" className={classes.appBar}>
         <Toolbar>
           <Typography variant="h6" noWrap>
-            Insects Monitoring Research Lab <EmojiNatureIcon />
+            Insects Monitoring Lab <EmojiNatureIcon />
           </Typography>
           {/* <div className={classes.creator}> */}
           <CreatorSelect
