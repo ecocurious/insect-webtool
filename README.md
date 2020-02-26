@@ -344,3 +344,8 @@ $ ./start-backend.sh
 
 app runs at
 http://195.201.97.57/
+
+delete from appearance_label where appearance_id in (select id from eco.appearances where frame_id in (select frame_id from eco.collection_frame where collection_id = 40));
+delete from eco.appearances where frame_id in (select frame_id from eco.collection_frame where collection_id = 40);
+delete from eco.frames where id in (select frame_id from eco.collection_frame where collection_id = 40);
+delete from eco.collection_frame where collection_id = 40;
