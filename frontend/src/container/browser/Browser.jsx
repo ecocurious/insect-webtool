@@ -8,6 +8,7 @@ import BrowserNav from "./BrowserNav";
 import CollectionList from "./CollectionList";
 import AddCollection from "./AddCollection";
 import ResultsHeader from "./ResultsHeader";
+import LabelAnalysis from "./LabelAnalysis";
 
 import Button from '@material-ui/core/Button';
 import ButtonGroup from '@material-ui/core/ButtonGroup';
@@ -40,7 +41,9 @@ const Browser = ({
   onSelectedFramesUpdate,
   onCollectionAddFrames,
   onCollectionRemoveFrames,
-  onSetActiveCollection
+  onSetActiveCollection,
+  resultsView,
+  onSetResultsView
 }) => {
   // There is probably a better way for this
   React.useEffect(() => {
@@ -59,7 +62,14 @@ const Browser = ({
     <Grid container justify="space-between" spacing={1} alignItems="flex-start">
       <Grid container item direction="column" xs={9} spacing={2}>
         <Grid container item xs={12} spacing={0}>
-          <BrowserNav search={search} onSearchUpdate={onSearchUpdate} frames={frames}/>
+          <BrowserNav
+              search={search}
+              onSearchUpdate={onSearchUpdate}
+              frames={frames}
+              resultsView={resultsView}
+              onSetResultsView={onSetResultsView}
+            />
+
         </Grid>
         <Grid item>
             <b style={{fontSize: "1.3em"}}>{search.mode == 'subsample' ?
@@ -95,16 +105,21 @@ const Browser = ({
             </Grid>
         </Grid>
 
-        <Grid item>
-            <FrameGrid
-              frames={frames}
-              showSelect={true}
-              onClickFrame={frameId => onClickFrame(activeCollection, frameId)}
-              selectedFrames={selectedFrames}
-              setLeftRight={setLeftRight}
-              onSelectedFramesUpdate={onSelectedFramesUpdate}
-            />
+            <Grid item>
+          {
+            resultsView == 'FRAMES' ? (
+                <FrameGrid
+                  frames={frames}
+                  showSelect={true}
+                  onClickFrame={frameId => onClickFrame(activeCollection, frameId)}
+                  selectedFrames={selectedFrames}
+                  setLeftRight={setLeftRight}
+                  onSelectedFramesUpdate={onSelectedFramesUpdate}
+                />
+            ) : <LabelAnalysis/>
+          }
         </Grid>
+
       </Grid>
       <Grid container item xs={3} spacing={2}>
         <Grid item>
@@ -149,7 +164,8 @@ export default withStyles(styles)(
       ntotal: state.searchResults.ntotal,
       collections: state.collections,
       activeCollection: state.ui.activeCollection,
-      selectedFrames: state.searchResults.selectedFrames
+      selectedFrames: state.searchResults.selectedFrames,
+      resultsView: state.ui.resultsView
     }),
     (dispatch, ownProps) => ({
       onSearchUpdate: search => dispatch(a.updateSearch(search)),
@@ -163,7 +179,8 @@ export default withStyles(styles)(
       onSelectedFramesUpdate: selectedFrames => dispatch(a.updateSelectedFrames(selectedFrames)),
       onCollectionAddFrames: data => dispatch(a.collectionAddFrames(data)),
       onCollectionRemoveFrames: data => dispatch(a.collectionRemoveFrames(data)),
-      onSetActiveCollection: ({collectionId}) => dispatch(a.setActiveCollection({collectionId}))
+      onSetActiveCollection: ({collectionId}) => dispatch(a.setActiveCollection({collectionId})),
+      onSetResultsView: data => dispatch(a.setResultsView(data))
     })
   )(Browser)
 );

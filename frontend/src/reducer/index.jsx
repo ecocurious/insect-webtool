@@ -7,7 +7,7 @@ const view = createReducer("BROWSER", {
 });
 
 const ui = createReducer(
-  { activeCollection: null, activeAppearance: null },
+  { activeCollection: null, activeAppearance: null, resultsView : 'FRAMES' },
   {
     SERVER_INIT: (state, action) => ({
       ...state,
@@ -28,6 +28,10 @@ const ui = createReducer(
     ACTIVE_COLLECTION_SET: (state, action) => ({
         ...state,
         ...{activeCollection: action.collectionId}
+    }),
+    RESULTS_VIEW_SET: (state, action) => ({
+        ...state,
+        ...{resultsView: action.resultsView}
     })
   }
 );

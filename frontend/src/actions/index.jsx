@@ -152,3 +152,10 @@ export const setActiveCollection = ({collectionId}) => {
       server: true
   };
 }
+
+export const setResultsView = (resultsView) => {
+  return {
+      type: "RESULTS_VIEW_SET",
+      resultsView
+  };
+}

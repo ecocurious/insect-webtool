@@ -22,6 +22,11 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import _ from "lodash";
 
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
+
+
 const useStyles = makeStyles({
   datePicker: { width: 150, marginRight: 20 },
   timePicker: { width: 100 },
@@ -65,7 +70,7 @@ const DateTimePicker = ({ date, setDate, label, classes }) => (
   </>
 );
 
-const BrowserNav = ({ search, onSearchUpdate, frames }) => {
+const BrowserNav = ({ search, onSearchUpdate, frames, resultsView, onSetResultsView }) => {
   const classes = useStyles();
   console.log(search.startDate);
   return (
@@ -117,6 +122,25 @@ const BrowserNav = ({ search, onSearchUpdate, frames }) => {
                  <MenuItem value={100}>100</MenuItem>
                </Select>
        </Grid>
+
+       <Grid item>
+       </Grid>
+
+        <Grid>
+       <FormGroup row>
+         <FormControlLabel
+           control={
+               <Switch
+                   checked={resultsView == 'LABELS_ANALYSIS'}
+                   onChange={() => {
+                       const toOther = {'FRAMES': 'LABELS_ANALYSIS', 'LABELS_ANALYSIS': 'FRAMES'};
+                       onSetResultsView(toOther[resultsView])
+                    }}/>
+           }
+           label="Analysis"
+         />
+       </FormGroup>
+        </Grid>
 
       <Grid item xs>
         <DateRange
