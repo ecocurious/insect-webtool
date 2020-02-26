@@ -75,7 +75,7 @@ const ShowDownloadDialog = ({open, onClose, collection}) => {
                         import os{"\n"}
                         os.environ['INSECTS_PLATFORM_URL'] = '{process.env.APP_HOST}'{"\n"}
                         _, frame_paths = api.import_collection({collection.id}, '/content/data', with_appearances_only=False){"\n"}
-                        data = api.create_file_list(frame_paths, '/content/data/coll({collection.id}.txt'){"\n"}
+                        data = api.create_file_list(frame_paths, '/content/data/coll{collection.id}.txt'){"\n"}
                     </pre>
                 </Box>
           </DialogContent>
