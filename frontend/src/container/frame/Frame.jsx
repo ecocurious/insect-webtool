@@ -1,31 +1,55 @@
 import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { makeStyles, createStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
 
 import * as a from "../../actions";
 
 import Grid from "@material-ui/core/Grid";
 
+import FormGroup from "@material-ui/core/FormGroup";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import Switch from "@material-ui/core/Switch";
+import Breadcrumbs from "@material-ui/core/Breadcrumbs";
+import Link from "@material-ui/core/Link";
 
 import ImageCard from "./ImageCard";
 import LabelSelector from "./LabelSelector";
 import Appearance from "./Appearance";
+import DeleteIcon from "@material-ui/icons/Delete";
+import IconButton from "@material-ui/core/IconButton";
 
 import _ from "lodash";
 import { Typography } from "@material-ui/core";
 
-const useStyles = makeStyles({
-  img: { height: "100%" },
-  labelsControl: {},
-  labelListTable: {}
+const useStyles = makeStyles(
+  createStyles(theme => ({
+    img: { height: "100%" },
+    labelsControl: {},
+    labelListTable: {},
+    rightContainer: {
+      backgroundColor: theme.palette.background.paper,
+      margin: 10
+    }
+  }))
+);
+
+const enrichAppearances = ({ appearances, labels, creators }) => ({
+  ...appearances,
+  byKey: _.mapValues(appearances.byKey, app => ({
+    ...app,
+    creator: creators.byKey[app.creatorId],
+    appearanceLabels: app.appearanceLabels.map(al => ({
+      ...al,
+      label: labels.byKey[al.labelId]
+    }))
+  }))
 });
 
 const Frame = ({
   labels,
+  creators,
   frame,
-  activeAppearance,
+  activeAppearanceId,
   appearances,
   collection,
   onChangeFrame,
@@ -42,20 +66,47 @@ const Frame = ({
 
   const classes = useStyles();
   const [activeLabel, setActiveLabel] = React.useState(labels.allIds[0]);
+  const [colorBy, setColorBy] = React.useState("CREATOR");
   //   const [activeAppearance, setActiveAppearance] = React.useState();
+
+  const enrichedAppearances = enrichAppearances({
+    appearances,
+    labels,
+    creators
+  });
+
+  const activeAppearance = enrichedAppearances.byKey[activeAppearanceId];
+  //   const activeAppearance = null;
 
   return (
     <Grid container justify="space-between" spacing={1} alignItems="flex-start">
       <Grid container item xs={9} spacing={2}>
         <Grid container item xs={12} spacing={0}>
+          <Breadcrumbs aria-label="breadcrumb">
+            <Link
+              color={colorBy == "CREATOR" ? "textPrimary" : "inherit"}
+              onClick={() => setColorBy("CREATOR")}
+            >
+              Show Creators
+            </Link>
+            <Link
+              color={colorBy == "LABEL" ? "textPrimary" : "inherit"}
+              onClick={() => setColorBy("LABEL")}
+            >
+              Show Labels
+            </Link>
+          </Breadcrumbs>
+        </Grid>
+        <Grid container item xs={12} spacing={0}>
           <ImageCard
+            colorBy={colorBy}
             collection={collection}
             setActiveAppearance={setActiveAppearance}
-            activeAppearance={activeAppearance}
+            activeAppearance={activeAppearanceId}
             onAddAppearance={appearance =>
               onAddAppearance(frame.id, appearance, [activeLabel])
             }
-            appearances={appearances}
+            appearances={enrichedAppearances}
             frame={frame}
             onChangeFrame={shift =>
               onChangeFrame(collection.id, frame.id, shift)
@@ -65,30 +116,97 @@ const Frame = ({
           />
         </Grid>
       </Grid>
-      <Grid container item xs={3} spacing={2}>
-        <Grid container item xs={12} spacing={0}>
+      <Grid
+        item
+        container
+        direction="column"
+        justify="space-evenly"
+        alignItems="center"
+        xs={3}
+        spacing={5}
+      >
+        <Grid
+          container
+          item
+          xs={12}
+          spacing={0}
+          className={classes.rightContainer}
+        >
           <LabelSelector
             setActiveLabel={setActiveLabel}
             labels={labels}
             activeLabel={activeLabel}
             onAddAppearanceLabel={() =>
-              onAddAppearanceLabel(activeAppearance, activeLabel)
+              onAddAppearanceLabel(activeAppearanceId, activeLabel)
             }
           />
         </Grid>
-        <Grid container item xs={12} spacing={0}>
-          {(activeAppearance !== undefined) &
-          (activeAppearance in appearances.byKey) ? (
-            <>
-              <Typography>Labels</Typography>
+
+        {activeAppearance ? (
+          <>
+            <Grid
+              className={classes.rightContainer}
+              container
+              item
+              xs={12}
+              spacing={0}
+              direction="row"
+            >
+              <Grid xs={12}>
+                <Typography gutterBottom variant="overline">
+                  Appearance
+                </Typography>
+              </Grid>
+              <Grid xs={4} direction="column">
+                <Typography gutterBottom variant="subtitle1">
+                  Creator
+                </Typography>
+                <Typography variant="body2" gutterBottom>
+                  {activeAppearance.creator
+                    ? activeAppearance.creator.name
+                    : null}
+                </Typography>
+              </Grid>
+              <Grid xs={4} direction="column">
+                <Typography variant="body2" color="textSecondary">
+                  {activeAppearance.dateCreated}
+                </Typography>
+                <Typography gutterBottom variant="subtitle1">
+                  ID
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  {activeAppearance.id}
+                </Typography>
+              </Grid>
+              <Grid xs={4} direction="column" alignItems="center">
+                <IconButton
+                  onClick={() => onDeleteAppearance(activeAppearance.id)}
+                >
+                  <DeleteIcon />
+                </IconButton>
+                <Typography gutterBottom variant="caption">
+                  Delete
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid
+              className={classes.rightContainer}
+              container
+              item
+              xs={12}
+              spacing={0}
+            >
+              <Typography gutterBottom variant="overline">
+                Labels
+              </Typography>
               <Appearance
-                appearance={appearances.byKey[activeAppearance]}
+                appearance={activeAppearance}
                 labels={labels}
                 onDeleteAppearanceLabel={onDeleteAppearanceLabel}
               />
-            </>
-          ) : null}
-        </Grid>
+            </Grid>
+          </>
+        ) : null}
       </Grid>
     </Grid>
   );
@@ -98,9 +216,10 @@ export default connect(
   (state, ownProps) => ({
     collection: state.collections.byKey[state.ui.activeCollection],
     frame: state.frame,
+    creators: state.creators,
     labels: state.labels,
     appearances: state.appearances,
-    activeAppearance: state.ui.activeAppearance
+    activeAppearanceId: state.ui.activeAppearance
   }),
   (dispatch, ownProps) => ({
     onChangeFrame: (collectionId, frameId, shift) =>

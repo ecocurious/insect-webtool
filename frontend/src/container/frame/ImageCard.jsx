@@ -51,7 +51,6 @@ const useStyles = makeStyles({
 });
 
 const ImageCard = ({
-  activelabels,
   activeAppearance,
   setActiveAppearance,
   onAddAppearance,
@@ -60,7 +59,8 @@ const ImageCard = ({
   frame,
   onChangeFrame,
   onUpdateBox,
-  onDeleteAppearance
+  onDeleteAppearance,
+  colorBy
 }) => {
   const classes = useStyles();
   const [imageSize, setImageSize] = React.useState(null);
@@ -103,6 +103,7 @@ const ImageCard = ({
             {appearances.allIds.map((id, idx) => (
               <ImageAnnotation
                 key={"annotation-" + idx}
+                colorBy={colorBy}
                 appearance={appearances.byKey[id]}
                 imageSize={imageSize}
                 editable={!addMode}

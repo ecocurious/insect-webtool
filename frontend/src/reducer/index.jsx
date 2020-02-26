@@ -1,5 +1,7 @@
 import { combineReducers } from "redux";
 import { createReducer, findNonSerializableValue } from "redux-starter-kit";
+import palette from "google-palette";
+
 import _ from "lodash";
 
 const view = createReducer("BROWSER", {
@@ -7,10 +9,11 @@ const view = createReducer("BROWSER", {
 });
 
 const ui = createReducer(
-  { activeCollection: null,
-      activeAppearance: null,
-      resultsView : 'FRAMES'
-      // resultsView : 'LABELS_ANALYSIS'
+  {
+    activeCollection: null,
+    activeAppearance: null,
+    resultsView: "FRAMES"
+    // resultsView : 'LABELS_ANALYSIS'
   },
   {
     SERVER_INIT: (state, action) => ({
@@ -30,12 +33,12 @@ const ui = createReducer(
       activeAppearance: action.appearance.id
     }),
     ACTIVE_COLLECTION_SET: (state, action) => ({
-        ...state,
-        ...{activeCollection: action.collectionId}
+      ...state,
+      ...{ activeCollection: action.collectionId }
     }),
     RESULTS_VIEW_SET: (state, action) => ({
-        ...state,
-        ...{resultsView: action.resultsView}
+      ...state,
+      ...{ resultsView: action.resultsView }
     })
   }
 );
@@ -63,6 +66,11 @@ const upsert = ({ byKey, allIds }, newObj) => ({
   byKey: { ...byKey, [newObj.id]: newObj },
   allIds: allIds.includes(newObj.id) ? allIds : [...allIds, newObj.id]
 });
+
+const addColor = objs => {
+  const colors = palette("rainbow", objs.length);
+  return objs.map((obj, idx) => ({ ...obj, color: colors[idx] }));
+};
 
 const collections = createReducer(key([]), {
   SERVER_INIT: (state, action) => key(action.collections),
@@ -108,12 +116,12 @@ const appearances = createReducer(
 );
 
 const creators = createReducer(keyFirstActive([]), {
-  SERVER_INIT: (state, action) => keyFirstActive(action.creators),
+  SERVER_INIT: (state, action) => keyFirstActive(addColor(action.creators)),
   CREATOR_SELECT: (state, action) => ({ ...state, active: action.creatorId })
 });
 
 const labels = createReducer(key([]), {
-  SERVER_INIT: (state, action) => key(action.labels)
+  SERVER_INIT: (state, action) => key(addColor(action.labels))
 });
 
 const defaultSearch = {
@@ -126,21 +134,21 @@ const defaultSearch = {
 };
 
 const search = createReducer(defaultSearch, {
-    SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search }),
+  SEARCH_UPDATE: (state, action) => ({ ...state, ...action.search }),
 
-    /* TODO: change startDate, endDate to integers. (this is so hacky) */
-    SEARCH_UPDATED: (state, action) =>{
-        const s = action.search;
-        const startDate = new Date(s.startDate);
-        const endDate = new Date(s.endDate);
+  /* TODO: change startDate, endDate to integers. (this is so hacky) */
+  SEARCH_UPDATED: (state, action) => {
+    const s = action.search;
+    const startDate = new Date(s.startDate);
+    const endDate = new Date(s.endDate);
 
-        return ({ ...state, ...{...s, ...{startDate, endDate}}})
-    },
+    return { ...state, ...{ ...s, ...{ startDate, endDate } } };
+  },
 
-    ACTIVE_COLLECTION_SET: (search, action) => (
-        {...search, ...{collectionId: action.collectionId}}
-    )
-
+  ACTIVE_COLLECTION_SET: (search, action) => ({
+    ...search,
+    ...{ collectionId: action.collectionId }
+  })
 });
 
 const searchResults = createReducer(

@@ -26,8 +26,7 @@ import LiveView from "./container/LiveView";
 import CreatorSelect from "./container/CreatorSelect";
 // import Dataset from "./container/Dataset";
 
-
-import EmojiNatureIcon from '@material-ui/icons/EmojiNature';
+import EmojiNatureIcon from "@material-ui/icons/EmojiNature";
 
 const drawerWidth = 240;
 
@@ -52,7 +51,7 @@ const useStyles = makeStyles(theme => ({
   stripe: {
     backgroundColor: "red"
   },
-  toolbar: theme.mixins.toolbar,
+  toolbar: { ...theme.mixins.toolbar, width: "100%" },
   //   taps: theme.mixins.tabs,
   tabs: {
     backgroundColor: theme.palette.background.paper,
@@ -63,9 +62,9 @@ const useStyles = makeStyles(theme => ({
     minHeight: "48px"
   },
   creator: {
-    position: "relative",
-    borderRadius: theme.shape.borderRadius,
-    width: "100%"
+    position: "absolute",
+    right: 20,
+    borderRadius: theme.shape.borderRadius
   }
 }));
 
@@ -83,16 +82,16 @@ const Index = ({ view, updateView, creators, onSelectCreator }) => {
     <div className={classes.root}>
       <CssBaseline />
       <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
+        <Toolbar className={classes.toolbar}>
           <Typography variant="h6" noWrap>
             Insects Monitoring Lab <EmojiNatureIcon />
           </Typography>
-          {/* <div className={classes.creator}> */}
-          <CreatorSelect
-            creators={creators}
-            onSelectCreator={onSelectCreator}
-          />
-          {/* </div> */}
+          <div className={classes.creator}>
+            <CreatorSelect
+              creators={creators}
+              onSelectCreator={onSelectCreator}
+            />
+          </div>
         </Toolbar>
         <Tabs
           className={classes.tabs}

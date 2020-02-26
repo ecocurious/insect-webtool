@@ -2,17 +2,15 @@ import React from "react";
 import { Rnd } from "react-rnd";
 import { makeStyles } from "@material-ui/core/styles";
 
-import CloseIcon from "@material-ui/icons/Close";
-
 const useStyles = makeStyles(theme => ({
   box: {
-    border: "solid 1px black",
-    backgroundColor: "rgba(0, 0, 0, 0.1)"
+    backgroundColor: "rgba(0, 0, 0, 0.05)"
     // background: "#f0f0f0"
   },
-  delete: {
-    top: 0,
-    right: 0,
+  label: {
+    top: -20,
+    left: 0,
+    width: 300,
     position: "absolute"
   }
 }));
@@ -43,7 +41,8 @@ const ImageAnnotation = ({
   onClick,
   active,
   onRemove,
-  editable
+  editable,
+  colorBy
 }) => {
   if (!imageSize) {
     return null;
@@ -79,9 +78,35 @@ const ImageAnnotation = ({
     setTempPos({ x, y, height, width });
   };
 
+  console.log(appearance);
+  const color =
+    colorBy == "CREATOR"
+      ? appearance.creator
+        ? appearance.creator.color
+        : "black"
+      : appearance.appearanceLabels.length
+      ? appearance.appearanceLabels[0].label.color
+      : "black";
+
+  const label =
+    colorBy == "CREATOR"
+      ? appearance.creator
+        ? appearance.creator.name
+        : ""
+      : appearance.appearanceLabels.length
+      ? appearance.appearanceLabels[0].label.scientificName
+      : "";
+
   return editable ? (
     <Rnd
-      style={active ? { background: "rgba(255, 0, 0, 0.2)" } : {}}
+      style={
+        active
+          ? {
+              border: `dashed 3px #${color}`
+              //   borderColor: ``
+            }
+          : { border: `solid 3px #${color}` }
+      }
       className={classes.box}
       size={{ width: tempPos.width, height: tempPos.height }}
       position={{ x: tempPos.x, y: tempPos.y }}
@@ -97,7 +122,9 @@ const ImageAnnotation = ({
         });
       }}
     >
-      <CloseIcon onClick={onRemove} size="small" className={classes.delete} />
+      <div style={{ color: `#${color}` }} className={classes.label}>
+        {label}
+      </div>
     </Rnd>
   ) : (
     <div

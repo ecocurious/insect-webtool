@@ -172,6 +172,15 @@ def add_collection(*, name, **_):
     emit_one('COLLECTION_ADDED', {'collection': coll})
 
 
+def add_creator(*, name, **_):
+    with db.session_scope() as session:
+        creator = models.Creator(name=name)
+        session.add(creator)
+        session.commit()
+        creator_dict = to_dict(creator)
+    emit_one('CREATOR_ADDED', {'creator': creator_dict})
+
+
 def delete_collection(*, collection_id, **_):
     with db.session_scope() as session:
         coll = session.query(models.Collection).get(collection_id)
