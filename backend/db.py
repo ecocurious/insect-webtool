@@ -282,6 +282,7 @@ def collection_add_frames_via_query(session, collection_id, frames_query, nframe
     q = 'insert into eco.collection_frame (collection_id, frame_id) values %s on conflict do nothing'
     cursor = get_cursor(session)
     execute_values(cursor, q, data, page_size=1000)
+    return len(data)
 
 
 def collection_remove_frames_via_query(session, collection_id, frames_query):

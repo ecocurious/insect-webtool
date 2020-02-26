@@ -235,10 +235,17 @@ def addto_collection(*, search, collection_id, sample_size, **_):
             session, collection_id, query, nframes=sample_size)
 
 
-def collection_add_frames(*, collection_id, frame_ids, **_):
+def collection_add_frames(*, collection_id, frame_ids, search, full, **_):
     with db.session_scope() as session:
-        n = db.collection_add_frames(session, collection_id, frame_ids)
-        emit_one('COLLECTION_FRAMES_UPDATED', {'collectionId': collection_id, 'countDelta': n})
+        if full:
+            frames_query = models.FramesQuery(
+                tbegin=search['start_date'], tend=search['end_date'],
+                collection_id=search.get('collection_id'))
+            n = db.collection_add_frames_via_query(session, collection_id, frames_query, nframes=None)
+            emit_one('COLLECTION_FRAMES_UPDATED', {'collectionId': collection_id, 'countDelta': n})
+        else:
+            n = db.collection_add_frames(session, collection_id, frame_ids)
+            emit_one('COLLECTION_FRAMES_UPDATED', {'collectionId': collection_id, 'countDelta': n})
 
 
 def collection_remove_frames(*, collection_id, frame_ids, **_):

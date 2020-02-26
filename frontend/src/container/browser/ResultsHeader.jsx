@@ -76,9 +76,9 @@ const ResultsHeader = ({
     const [addDialogIsOpen, setDialogIsOpen] = React.useState(false);
     const [confirmRemoveDialogOpen, setConfirmRemoveDialogOpen] = React.useState(false);
 
-    const handleAdd = ({collectionId}) => {
+    const handleAdd = ({collectionId, full}) => {
         const frameIds = _.keys(selectedFrames);
-        onCollectionAddFrames({collectionId, frameIds})
+        onCollectionAddFrames({collectionId, frameIds, full, search})
         onSelectedFramesUpdate({});
         onSearchUpdate(search);
         setDialogIsOpen(false)
@@ -133,6 +133,7 @@ const ResultsHeader = ({
                           onAdd={handleAdd}
                           collections={collections}
                           selectedFrames={selectedFrames}
+                          ntotal={ntotal}
                         />
                     </ButtonGroup>
                     {

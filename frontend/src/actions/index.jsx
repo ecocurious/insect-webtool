@@ -125,11 +125,13 @@ export const setActiveAppearance = appearanceId => {
   };
 };
 
-export const collectionAddFrames = ({collectionId, frameIds}) => {
+export const collectionAddFrames = ({collectionId, frameIds, search, full}) => {
   return {
       type: "COLLECTION_ADD_FRAMES",
       collectionId,
       frameIds,
+      search,
+      full,
       server: true
   };
 }
