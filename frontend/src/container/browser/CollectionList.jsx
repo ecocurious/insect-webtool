@@ -57,7 +57,7 @@ const ShowDownloadDialog = ({open, onClose, collection}) => {
 
           <DialogContent>
                 <Box>
-                    This link includes urls to the frame pictures and all the labels of the dataset "dsagdsagjads":
+                    This link includes urls to the frame pictures and all the labels of the dataset "{collection.name}":
                 </Box>
                 <Box m={2}>
                     <Link href={downloadUrl}>{downloadUrl}</Link>
