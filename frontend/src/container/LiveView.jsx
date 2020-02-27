@@ -50,14 +50,14 @@ const LiveImage = ({ size, image }) => {
           </CardContent>
         </Card>
       </Grid>
-      <Grid container item xs={6} spacing={3}>
-        <Card className={classes.card}>
-          <CardHeader title={"Rasberry 2"} />
-          <CardContent>
-            <div className={classes.placeholder} style={size}></div>
-          </CardContent>
-        </Card>
-      </Grid>
+      {/* <Grid container item xs={6} spacing={3}> */}
+      {/*   <Card className={classes.card}> */}
+      {/*     <CardHeader title={"Rasberry 2"} /> */}
+      {/*     <CardContent> */}
+      {/*       <div className={classes.placeholder} style={size}></div> */}
+      {/*     </CardContent> */}
+      {/*   </Card> */}
+      {/* </Grid> */}
     </Grid>
   );
 };
