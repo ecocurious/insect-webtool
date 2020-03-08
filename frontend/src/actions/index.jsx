@@ -1,3 +1,5 @@
+// view
+
 export const updateView = view => {
   return {
     type: "VIEW_UPDATE",
@@ -6,6 +8,22 @@ export const updateView = view => {
   };
 };
 
+export const setActiveAppearance = appearanceId => {
+  return {
+    type: "AKTIVE_APPEARANCE_SET",
+    appearanceId
+  };
+};
+
+export const setResultsView = resultsView => {
+  return {
+    type: "RESULTS_VIEW_SET",
+    resultsView
+  };
+};
+
+// search
+
 export const updateSearch = search => {
   return {
     type: "SEARCH_UPDATE",
@@ -13,6 +31,8 @@ export const updateSearch = search => {
     server: true
   };
 };
+
+// appearanceLabel
 
 export const deleteAppearanceLabel = appearanceLabelId => {
   return {
@@ -39,6 +59,8 @@ export const deleteAppearance = appearanceId => {
   };
 };
 
+// appearance
+
 export const addAppearance = ({ frameId, appearance, labelIds }) => {
   return {
     type: "APPEARANCE_ADD",
@@ -49,6 +71,17 @@ export const addAppearance = ({ frameId, appearance, labelIds }) => {
   };
 };
 
+export const updateBox = (appearanceId, box) => {
+  return {
+    type: "BOX_UPDATE",
+    appearanceId,
+    box,
+    server: true
+  };
+};
+
+// frame
+
 export const changeFrame = (collectionId, frameId, shift) => {
   return {
     type: "FRAME_CHANGE",
@@ -58,6 +91,16 @@ export const changeFrame = (collectionId, frameId, shift) => {
     server: true
   };
 };
+
+export const updateSelectedFrames = selectedFrames => {
+  return {
+    type: "SELECTED_FRAMES_UPDATE",
+    selectedFrames,
+    server: false
+  };
+};
+
+// Collection
 
 export const deleteCollection = collectionId => {
   return {
@@ -85,6 +128,41 @@ export const addToCollection = ({ search, collectionId, sampleSize }) => {
   };
 };
 
+export const collectionAddFrames = ({
+  collectionId,
+  frameIds,
+  search,
+  full
+}) => {
+  return {
+    type: "COLLECTION_ADD_FRAMES",
+    collectionId,
+    frameIds,
+    search,
+    full,
+    server: true
+  };
+};
+
+export const collectionRemoveFrames = ({ collectionId, frameIds }) => {
+  return {
+    type: "COLLECTION_REMOVE_FRAMES",
+    collectionId,
+    frameIds,
+    server: true
+  };
+};
+
+export const setActiveCollection = ({ collectionId }) => {
+  return {
+    type: "ACTIVE_COLLECTION_SET",
+    collectionId,
+    server: true
+  };
+};
+
+// creator
+
 export const selectCreator = creatorId => {
   return {
     type: "CREATOR_SELECT",
@@ -100,62 +178,3 @@ export const addCreator = name => {
     server: true
   };
 };
-
-export const updateBox = (appearanceId, box) => {
-  return {
-    type: "BOX_UPDATE",
-    appearanceId,
-    box,
-    server: true
-  };
-};
-
-export const updateSelectedFrames = selectedFrames => {
-  return {
-    type: "SELECTED_FRAMES_UPDATE",
-    selectedFrames,
-    server: false
-  };
-};
-
-export const setActiveAppearance = appearanceId => {
-  return {
-    type: "AKTIVE_APPEARANCE_SET",
-    appearanceId
-  };
-};
-
-export const collectionAddFrames = ({collectionId, frameIds, search, full}) => {
-  return {
-      type: "COLLECTION_ADD_FRAMES",
-      collectionId,
-      frameIds,
-      search,
-      full,
-      server: true
-  };
-}
-
-export const collectionRemoveFrames = ({collectionId, frameIds}) => {
-  return {
-      type: "COLLECTION_REMOVE_FRAMES",
-      collectionId,
-      frameIds,
-      server: true
-  };
-}
-
-export const setActiveCollection = ({collectionId}) => {
-  return {
-      type: "ACTIVE_COLLECTION_SET",
-      collectionId,
-      server: true
-  };
-}
-
-export const setResultsView = (resultsView) => {
-  return {
-      type: "RESULTS_VIEW_SET",
-      resultsView
-  };
-}

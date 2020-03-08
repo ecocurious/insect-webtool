@@ -24,7 +24,6 @@ import Browser from "./container/browser/Browser";
 import Frame from "./container/frame/Frame";
 import LiveView from "./container/LiveView";
 import CreatorSelect from "./container/CreatorSelect";
-// import Dataset from "./container/Dataset";
 
 import EmojiNatureIcon from "@material-ui/icons/EmojiNature";
 
@@ -41,18 +40,11 @@ const useStyles = makeStyles(theme => ({
     width: drawerWidth,
     flexShrink: 0
   },
-  drawerPaper: {
-    width: drawerWidth
-  },
   content: {
     flexGrow: 1,
     padding: theme.spacing(3)
   },
-  stripe: {
-    backgroundColor: "red"
-  },
   toolbar: { ...theme.mixins.toolbar, width: "100%" },
-  //   taps: theme.mixins.tabs,
   tabs: {
     backgroundColor: theme.palette.background.paper,
     color: "black",
@@ -71,7 +63,6 @@ const useStyles = makeStyles(theme => ({
 const views = [
   { screenName: "Live", id: "LIVE" },
   { screenName: "Browser", id: "BROWSER" },
-  //   { screenName: "Single Dataset", id: "DATASET" },
   { screenName: "Annotation", id: "FRAME" }
 ];
 
@@ -122,26 +113,24 @@ const Index = ({ view, updateView, creators, onSelectCreator }) => {
 
 const epicMiddleware = createEpicMiddleware();
 
+// sent all actions with property serverReady to socktIo backend
 let socket = io(process.env.APP_HOST);
 let socketIoMiddleware = createSocketIoMiddleware(
   socket,
   (type, action) => action.serverReady
 );
 
-const middlewares = [epicMiddleware, socketIoMiddleware, logger];
+const enhancer = compose(
+  applyMiddleware([epicMiddleware, socketIoMiddleware, logger])
+);
 
-const enhancer = compose(applyMiddleware(...middlewares));
-
-const initalState = {};
-
-const store = createStore(reducers, initalState, enhancer);
+const store = createStore(reducers, {}, enhancer);
 
 epicMiddleware.run(epics);
 
 const IndexContainer = connect(
   (state, ownProps) => ({ view: state.view, creators: state.creators }),
   (dispatch, ownProps) => ({
-    // onMount: () => dispatch(a.initApp()),
     updateView: view => dispatch(a.updateView(view)),
     onSelectCreator: id => dispatch(a.selectCreator(id))
   })

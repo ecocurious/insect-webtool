@@ -1,8 +1,37 @@
 import { combineReducers } from "redux";
-import { createReducer, findNonSerializableValue } from "redux-starter-kit";
+import { createReducer } from "redux-starter-kit";
 import palette from "google-palette";
 
 import _ from "lodash";
+
+// utils
+
+const key = list => ({
+  byKey: _.keyBy(list, "id"),
+  allIds: _.map(list, ({ id }) => id)
+});
+
+const keyFirstActive = list => {
+  const keyed = key(list);
+  return { ...keyed, active: keyed.allIds[0] };
+};
+
+const remove = ({ byKey, allIds }, id) => ({
+  byKey: _.omit(byKey, [id]),
+  allIds: _.without(allIds, id)
+});
+
+const upsert = ({ byKey, allIds }, newObj) => ({
+  byKey: { ...byKey, [newObj.id]: newObj },
+  allIds: allIds.includes(newObj.id) ? allIds : [...allIds, newObj.id]
+});
+
+const addColor = objs => {
+  const colors = palette("rainbow", objs.length);
+  return objs.map((obj, idx) => ({ ...obj, color: colors[idx] }));
+};
+
+// reducer
 
 const view = createReducer("BROWSER", {
   VIEW_UPDATE: (state, action) => action.view
@@ -13,7 +42,6 @@ const ui = createReducer(
     activeCollection: null,
     activeAppearance: null,
     resultsView: "FRAMES"
-    // resultsView : 'LABELS_ANALYSIS'
   },
   {
     SERVER_INIT: (state, action) => ({
@@ -47,49 +75,13 @@ const liveImage = createReducer(null, {
   LIVEIMAGE_NEW: (state, action) => action.liveImage
 });
 
-const key = list => ({
-  byKey: _.keyBy(list, "id"),
-  allIds: _.map(list, ({ id }) => id)
-});
-
-const keyFirstActive = list => {
-  const keyed = key(list);
-  return { ...keyed, active: keyed.allIds[0] };
-};
-
-const remove = ({ byKey, allIds }, id) => ({
-  byKey: _.omit(byKey, [id]),
-  allIds: _.without(allIds, id)
-});
-
-const upsert = ({ byKey, allIds }, newObj) => ({
-  byKey: { ...byKey, [newObj.id]: newObj },
-  allIds: allIds.includes(newObj.id) ? allIds : [...allIds, newObj.id]
-});
-
-const addColor = objs => {
-  const colors = palette("rainbow", objs.length);
-  return objs.map((obj, idx) => ({ ...obj, color: colors[idx] }));
-};
-
 const collections = createReducer(key([]), {
   SERVER_INIT: (state, action) => key(action.collections),
   COLLECTION_ADDED: (state, action) => upsert(state, action.collection),
   COLLECTION_DELETED: (state, action) => remove(state, action.collectionId)
 });
 
-// const collection = createReducer(
-//   { currentFrameId: null },
-//   {
-//     COLLECTION_LOADED: (state, action) => ({
-//       id: action.collection.id,
-//       currentFrameId: action.collection.frames[0].id
-//     })
-//   }
-// );
-
 const frame = createReducer(null, {
-  //   SERVER_INIT: (state, action) => ({ ...key(action.frames), selectedIds: [] }),
   APPEARANCES_FLUSH: (state, action) => action.frame
 });
 
