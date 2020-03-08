@@ -3,7 +3,7 @@ from backend.db import models
 from backend.db import db
 
 
-def insert_label_appearances(label_appearances, creator_id):
+def insert_label_appearances(*, label_appearances, creator_id):
     with db.session_scope() as session:
         creator = session.query(models.Creator).get(creator_id)
         for la in label_appearances:

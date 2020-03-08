@@ -41,7 +41,7 @@ def collection_remove_frames(*, collection_id, frame_ids, **_):
     return {'collectionId': collection_id, 'countDelta': -n}
 
 
-def download_collection(collection_id=28, appearance_needed=True):
+def download_collection(*, collection_id=28, appearance_needed=True):
     with db.session_scope() as session:
         xs = []
         f = session.query(models.Frame).options(
