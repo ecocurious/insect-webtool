@@ -13,16 +13,14 @@ setup(
     packages=find_packages(),
     install_requires=load_install_requires(),
     extras_require={
-        'example': [
+        'dev': [
             'ipdb',
             'jupyter',
             'jupyter-client',
             'jupyter-console',
             'ipython',
             'pylint',
-            'flake8',
-            'matplotlib',
-            'seaborn'
+            'flake8'
         ]
     },
     scripts=[

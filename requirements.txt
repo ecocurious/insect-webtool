@@ -1,15 +1,5 @@
-opencv-python
-pylint
-flake8
-ipdb
-ipdb
-ipython
 flask
 flask_socketio
-flask_graphql
-graphene
 sqlalchemy
-graphene_sqlalchemy
-django==2.2.8
-graphene_django
-
+psycopg2
+contextlib2

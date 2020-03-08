@@ -1,7 +1,6 @@
 import re
 from sqlalchemy.ext.declarative import DeclarativeMeta
 import json
-import numpy as np
 import datetime
 
 
@@ -87,17 +86,10 @@ def snakeize_dict_keys(d):
 # credit: https://stackoverflow.com/questions/44146087/pass-user-built-json-encoder-into-flasks-jsonify
 class Better_JSON_ENCODER(json.JSONEncoder):
     '''
-    Used to help jsonify numpy arrays or lists that contain numpy data types.
+    Used to help jsonify additional datatypes.
     '''
     def default(self, obj):
-        # print(obj)
-        if isinstance(obj, np.integer):
-            return int(obj)
-        elif isinstance(obj, np.floating):
-            return float(obj)
-        elif isinstance(obj, np.ndarray):
-            return obj.tolist()
-        elif isinstance(obj, (datetime.datetime)):
+        if isinstance(obj, (datetime.datetime)):
             if obj.tzinfo is None:
                 return obj.isoformat() + 'Z'
             else:
