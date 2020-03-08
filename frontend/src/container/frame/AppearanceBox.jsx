@@ -5,7 +5,6 @@ import { makeStyles } from "@material-ui/core/styles";
 const useStyles = makeStyles(theme => ({
   box: {
     backgroundColor: "rgba(0, 0, 0, 0.05)"
-    // background: "#f0f0f0"
   },
   label: {
     top: -20,
@@ -78,7 +77,6 @@ const ImageAnnotation = ({
     setTempPos({ x, y, height, width });
   };
 
-  console.log(appearance);
   const color =
     colorBy == "CREATOR"
       ? appearance.creator
@@ -103,7 +101,6 @@ const ImageAnnotation = ({
         active
           ? {
               border: `dashed 3px #${color}`
-              //   borderColor: ``
             }
           : { border: `solid 3px #${color}` }
       }

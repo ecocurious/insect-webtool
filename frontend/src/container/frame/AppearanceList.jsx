@@ -5,17 +5,8 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import Divider from "@material-ui/core/Divider";
-import BugReportOutlinedIcon from "@material-ui/icons/BugReportOutlined";
 import Typography from "@material-ui/core/Typography";
 
-import Collapse from "@material-ui/core/Collapse";
-import ExpandLess from "@material-ui/icons/ExpandLess";
-import ExpandMore from "@material-ui/icons/ExpandMore";
-import StarBorder from "@material-ui/icons/StarBorder";
-import ThumbUpIcon from "@material-ui/icons/ThumbUp";
-import ThumbDownIcon from "@material-ui/icons/ThumbDown";
-import DeleteIcon from "@material-ui/icons/Delete";
 import CloseIcon from "@material-ui/icons/Close";
 import IconButton from "@material-ui/core/IconButton";
 
@@ -32,9 +23,6 @@ const useStyles = makeStyles(theme => ({
     width: "30px",
     minWidth: "30px"
   }
-  //   inline: {
-  //     display: "inline"
-  //   }
 }));
 
 const AppearanceLabelText = ({ label, classes }) => (
@@ -57,17 +45,9 @@ const AppearanceLabelText = ({ label, classes }) => (
 );
 
 const AppearanceLabel = ({ appearanceLabel, labels, classes, onDelete }) => {
-  //   const [open, setOpen] = React.useState(false);
-
   return (
     <>
       <ListItem alignItems="flex-start">
-        {/* <ListItemIcon className={classes.voter}>
-          <ThumbUpIcon />
-        </ListItemIcon>
-        <ListItemIcon className={classes.voter}>
-          <ThumbDownIcon />
-        </ListItemIcon> */}
         <AppearanceLabelText
           label={labels.byKey[appearanceLabel.labelId]}
           classes={classes}
@@ -77,25 +57,7 @@ const AppearanceLabel = ({ appearanceLabel, labels, classes, onDelete }) => {
             <CloseIcon />
           </IconButton>
         </ListItemIcon>
-        {/* {open ? (
-          <ExpandLess onClick={() => setOpen(false)} />
-        ) : (
-          <ExpandMore onClick={() => setOpen(true)} />
-        )} */}
       </ListItem>
-      {/* <Collapse in={open} timeout="auto" unmountOnExit>
-        <List component="div" disablePadding>
-          {appearanceLabels.map((al, idx) => (
-            <ListItem className={classes.nested} key={"sub-app-" + idx}>
-              <AppearanceLabelText
-                label={labels.byKey[al.labelId]}
-                classes={classes}
-              />
-
-            </ListItem>
-          ))}
-        </List>
-      </Collapse> */}
     </>
   );
 };

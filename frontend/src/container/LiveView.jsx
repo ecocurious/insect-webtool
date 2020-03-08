@@ -28,7 +28,6 @@ const LiveImage = ({ size, image }) => {
   } catch (err) {
     console.log("cought live image decode exception");
   }
-  // console.log('s', s);
 
   return (
     <Grid container justify="space-between" spacing={3} alignItems="flex-start">
@@ -50,14 +49,6 @@ const LiveImage = ({ size, image }) => {
           </CardContent>
         </Card>
       </Grid>
-      {/* <Grid container item xs={6} spacing={3}> */}
-      {/*   <Card className={classes.card}> */}
-      {/*     <CardHeader title={"Rasberry 2"} /> */}
-      {/*     <CardContent> */}
-      {/*       <div className={classes.placeholder} style={size}></div> */}
-      {/*     </CardContent> */}
-      {/*   </Card> */}
-      {/* </Grid> */}
     </Grid>
   );
 };

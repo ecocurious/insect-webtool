@@ -11,7 +11,7 @@ import CardHeader from "@material-ui/core/CardHeader";
 import CardContent from "@material-ui/core/CardContent";
 
 import Image from "./Image";
-import ImageAnnotation from "./ImageAnnotation";
+import AppearanceBox from "./AppearanceBox";
 import Selector from "./Selector";
 
 const useStyles = makeStyles({
@@ -24,13 +24,11 @@ const useStyles = makeStyles({
   img: {
     height: 500,
     width: "auto",
-    // position: "relative",
     gridColumn: "1 / 1",
     gridRow: "1 / 1",
     zIndex: 1
   },
   annotations: {
-    // display: "flex",
     position: "relative",
     gridColumn: "1 / 1",
     gridRow: "1 / 1"
@@ -85,6 +83,7 @@ const ImageCard = ({
       />
       <CardContent>
         <div className={classes.outer}>
+          {/* The Selector is a rectangle tool to create new apprearances*/}
           {imageSize ? (
             <Selector
               style={{ zIndex: addMode ? 5 : 3 }}
@@ -95,13 +94,15 @@ const ImageCard = ({
               setDrag={setAddMode}
             />
           ) : null}
+          {/* The Image is displaying the image*/}
           <Image url={frame.url} classes={classes} setSize={setImageSize} />
           <div
             className={classes.annotations}
             style={{ zIndex: addMode ? 2 : 2 }}
           >
+            {/* The ImageAnnotation are the appearances after creation*/}
             {appearances.allIds.map((id, idx) => (
-              <ImageAnnotation
+              <AppearanceBox
                 key={"annotation-" + idx}
                 colorBy={colorBy}
                 appearance={appearances.byKey[id]}

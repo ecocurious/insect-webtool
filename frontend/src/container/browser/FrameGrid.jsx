@@ -9,12 +9,10 @@ import IconButton from "@material-ui/core/IconButton";
 import CheckBoxOutlineBlankIcon from "@material-ui/icons/CheckBoxOutlineBlank";
 import CheckBoxIcon from "@material-ui/icons/CheckBox";
 
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
 
-import LabelIcon from '@material-ui/icons/Label';
-
-
+import LabelIcon from "@material-ui/icons/Label";
 
 const useStyles = makeStyles({
   gridList: {
@@ -52,49 +50,65 @@ const FrameTile = ({
   };
 
   return (
-
     <GridListTile>
-      <img style={{cursor: "pointer"}}
-        onClick={() => onClickFrame(id)} src={thumbnail} alt={timestamp} className={classes.img} />
+      <img
+        style={{ cursor: "pointer" }}
+        onClick={() => onClickFrame(id)}
+        src={thumbnail}
+        alt={timestamp}
+        className={classes.img}
+      />
 
-       <Menu
-            id="simple-menu"
-            anchorEl={anchorEl}
-            keepMounted
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-           <MenuItem onClick={() => {setLeftRight({timestamp: new Date(timestamp), side: "left"}); handleClose()}}>Set Leftmost</MenuItem>
-           <MenuItem onClick={() => {setLeftRight({timestamp: new Date(timestamp), side: "right"}); handleClose()}}>Set Rightmost</MenuItem>
-       </Menu>
+      <Menu
+        id="simple-menu"
+        anchorEl={anchorEl}
+        keepMounted
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+      >
+        <MenuItem
+          onClick={() => {
+            setLeftRight({ timestamp: new Date(timestamp), side: "left" });
+            handleClose();
+          }}
+        >
+          Set Leftmost
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setLeftRight({ timestamp: new Date(timestamp), side: "right" });
+            handleClose();
+          }}
+        >
+          Set Rightmost
+        </MenuItem>
+      </Menu>
 
       <GridListTileBar
         titlePosition="top"
         actionPosition="right"
-          title={(<span style={{cursor: "pointer"}} onClick={handleClick}>
-              <div>{id} {(_.size(appearances) > 0) ? <LabelIcon/> : null}</div>
-        </span>)}
+        title={
+          <span style={{ cursor: "pointer" }} onClick={handleClick}>
+            <div>
+              {id} {_.size(appearances) > 0 ? <LabelIcon /> : null}
+            </div>
+          </span>
+        }
         actionIcon={
           <IconButton
-              aria-label={`select`}
-              className={classes.icon}
-              onClick={() => {
-                  var sf = _.clone(selectedFrames);
-                  if (selected) {
-                      _.unset(sf, id);
-                  } else {
-                      _.set(sf, id, true);
-                  }
-                  onSelectedFramesUpdate(sf);
-              }}
+            aria-label={`select`}
+            className={classes.icon}
+            onClick={() => {
+              var sf = _.clone(selectedFrames);
+              if (selected) {
+                _.unset(sf, id);
+              } else {
+                _.set(sf, id, true);
+              }
+              onSelectedFramesUpdate(sf);
+            }}
           >
-            {(
-              selected ? (
-                <CheckBoxIcon />
-              ) : (
-                <CheckBoxOutlineBlankIcon />
-              )
-            )}
+            {selected ? <CheckBoxIcon /> : <CheckBoxOutlineBlankIcon />}
           </IconButton>
         }
       />
@@ -102,8 +116,14 @@ const FrameTile = ({
   );
 };
 
-
-const FrameGrid = ({ frames, showSelect, onClickFrame, selectedFrames, onSelectedFramesUpdate, setLeftRight }) => {
+const FrameGrid = ({
+  frames,
+  showSelect,
+  onClickFrame,
+  selectedFrames,
+  onSelectedFramesUpdate,
+  setLeftRight
+}) => {
   const classes = useStyles();
   return (
     <GridList cellHeight={180} className={classes.gridList} cols={5}>
@@ -116,8 +136,6 @@ const FrameGrid = ({ frames, showSelect, onClickFrame, selectedFrames, onSelecte
           setLeftRight={setLeftRight}
           selected={_.has(selectedFrames, frame.id)}
           {...frame}
-          //   selected={showSelect ? frames.selectedIds.includes(frame.id) : false}
-          //   showSelect={showSelect}
         />
       ))}
     </GridList>

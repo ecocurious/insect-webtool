@@ -20,8 +20,8 @@ import Typography from "@material-ui/core/Typography";
 import Tabs from "@material-ui/core/Tabs";
 import Tab from "@material-ui/core/Tab";
 
-import Browser from "./container/browser/Browser";
-import Frame from "./container/frame/Frame";
+import Browser from "./container/browser";
+import Frame from "./container/frame";
 import LiveView from "./container/LiveView";
 import CreatorSelect from "./container/CreatorSelect";
 
@@ -121,7 +121,7 @@ let socketIoMiddleware = createSocketIoMiddleware(
 );
 
 const enhancer = compose(
-  applyMiddleware([epicMiddleware, socketIoMiddleware, logger])
+  applyMiddleware(...[epicMiddleware, socketIoMiddleware, logger])
 );
 
 const store = createStore(reducers, {}, enhancer);

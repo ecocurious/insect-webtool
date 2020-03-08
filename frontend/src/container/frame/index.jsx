@@ -5,16 +5,12 @@ import { connect } from "react-redux";
 import * as a from "../../actions";
 
 import Grid from "@material-ui/core/Grid";
-
-import FormGroup from "@material-ui/core/FormGroup";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Switch from "@material-ui/core/Switch";
 import Breadcrumbs from "@material-ui/core/Breadcrumbs";
 import Link from "@material-ui/core/Link";
 
-import ImageCard from "./ImageCard";
+import FrameCard from "./FrameCard";
 import LabelSelector from "./LabelSelector";
-import Appearance from "./Appearance";
+import AppearanceList from "./AppearanceList";
 import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 
@@ -67,7 +63,6 @@ const Frame = ({
   const classes = useStyles();
   const [activeLabel, setActiveLabel] = React.useState(labels.allIds[0]);
   const [colorBy, setColorBy] = React.useState("CREATOR");
-  //   const [activeAppearance, setActiveAppearance] = React.useState();
 
   const enrichedAppearances = enrichAppearances({
     appearances,
@@ -76,7 +71,6 @@ const Frame = ({
   });
 
   const activeAppearance = enrichedAppearances.byKey[activeAppearanceId];
-  //   const activeAppearance = null;
 
   return (
     <Grid container justify="space-between" spacing={1} alignItems="flex-start">
@@ -98,7 +92,7 @@ const Frame = ({
           </Breadcrumbs>
         </Grid>
         <Grid container item xs={12} spacing={0}>
-          <ImageCard
+          <FrameCard
             colorBy={colorBy}
             collection={collection}
             setActiveAppearance={setActiveAppearance}
@@ -199,7 +193,7 @@ const Frame = ({
               <Typography gutterBottom variant="overline">
                 Labels
               </Typography>
-              <Appearance
+              <AppearanceList
                 appearance={activeAppearance}
                 labels={labels}
                 onDeleteAppearanceLabel={onDeleteAppearanceLabel}

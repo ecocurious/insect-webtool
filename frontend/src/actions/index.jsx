@@ -118,16 +118,6 @@ export const addCollection = ({ name }) => {
   };
 };
 
-export const addToCollection = ({ search, collectionId, sampleSize }) => {
-  return {
-    type: "COLLECTION_ADDTO",
-    search,
-    collectionId,
-    sampleSize,
-    server: true
-  };
-};
-
 export const collectionAddFrames = ({
   collectionId,
   frameIds,

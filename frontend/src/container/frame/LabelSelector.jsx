@@ -4,7 +4,6 @@ import Autocomplete from "@material-ui/lab/Autocomplete";
 import TextField from "@material-ui/core/TextField";
 import ArrowDownwardIcon from "@material-ui/icons/ArrowDownward";
 import IconButton from "@material-ui/core/IconButton";
-import Button from "@material-ui/core/Button";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,14 +44,6 @@ const LabelSelector = ({
           />
         )}
       />
-      {/* <Button
-        size="small"
-        variant="outlined"
-        className={classes.margin}
-        onClick={onAddAppearanceLabel}
-      >
-        Add
-      </Button> */}
       <IconButton
         aria-label="delete"
         className={classes.button}
