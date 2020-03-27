@@ -1,8 +1,8 @@
 from flask import Flask, request, jsonify
 from flask_socketio import SocketIO, emit
 import json
-from backend.methods import search, appearance, collection, creator, frame, init, search
-from backend.utils import (
+from methods import search, appearance, collection, creator, frame, init, search
+from utils import (
     snakeize_dict_keys, camelize_dict_keys, Better_JSON_ENCODER, BetterJsonWrapper)
 
 
